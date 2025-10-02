@@ -6,6 +6,10 @@ namespace nebula {
 #define ecs() (ModuleRegistry::getInstance<ecs::World>(ECS))
 
 	namespace ecs {
+    
+    struct LuaTableRef {
+        int luaRefBaseTable = LUA_NOREF;
+    };
 
     //struct LuaComponentMetadata {
     //    const char *name;
@@ -36,106 +40,26 @@ namespace nebula {
     //    return 0;
     //}
 
-    static int componentNew(lua_State *L) {
-        const int argsCount = lua_gettop(L); // the first arg is self
+    static int componentConstructor(lua_State *L) {
+        // create a table if there was no argTable
+        int argsCount = lua_gettop(L);
 
-        // create the component table
-        lua_newtable(L);
+        if (argsCount == 0) {
+            luaL_error(L, "An error occurred while instantiating a component. Use 'Component:new()' instead of 'Component.new()'.");
+        }
 
-        // checks if exists metatable
+        if (argsCount == 1) {
+            lua_newtable(L);
+        }
+
+        if (argsCount > 2) {
+            luaL_error(L, "An error occurred while instantiating a component. Use 'Component:new()', 'Component:new(table)', 'Component()' or 'Component(table)'.");
+        }
+
         if(!lua_getmetatable(L, 1)) {
             luaL_error(L, "An error occurred while instantiating a component. Use 'Component:new()' instead of 'Component.new()'.");
         }
 
-        lua_getfield(L, -1, "__compId");
-        ComponentId componentId = lua_tointeger(L, -1);
-        lua_getfield(L, -2, "__compName");
-        const char* componentName = lua_tostring(L, -1);
-        lua_getfield(L, -3, "__fieldCount");
-        const int baseFieldCount = lua_tointeger(L, -1);
-        lua_pop(L, 3);
-
-        if (argsCount > baseFieldCount) {
-            lua_pushstring(L, componentName);
-            luaL_error(
-                L, 
-                "An error occurred while instantiating the component %s. Check if the constructor matches the component registered.",
-                lua_tostring(L, -1)
-            );
-        }
-
-        // ..., table, metatable
-        const int tableIndex = lua_gettop(L);
-        
-        int argIterator = 2; // starts at 2 because the first arg is self (and Lua's indexes starts at 1, not 0)
-
-        if (baseFieldCount > 0) {
-            // ..., table, metatable
-            lua_getfield(L, -2, "__prototype"); // base table
-            // ..., table, metatable, __prototype
-
-            // merge agrs with __prototype
-            // if an arg is missing, get from __prototype
-            lua_pushnil(L);
-            // ..., table, metatable, __prototype, nil
-            while (lua_next(L, -2) != 0) {
-                // ..., table, metatable, __prototype, nil, key, value
-                const char *keyName = lua_tostring(L, -2);
-
-                if (argIterator <= argsCount) {
-                    // there is an argument for this field
-                    // ..., key, value
-                    lua_pushvalue(L, argIterator);
-                    // ..., key, value, arg
-                    lua_setfield(L, tableIndex, keyName);
-                    // ..., key, value
-                    argIterator++;
-                } else if (!lua_iscfunction(L, -1)) {
-                    // the key was not passed in func args, so use the value in "__prototype"
-                    // ..., key, value, argTable[keyname]
-                    //lua_pop(L, 1);
-                    // ..., key, value
-                    lua_pushvalue(L, -1);
-                    // ..., key, value, value
-                    lua_setfield(L, tableIndex, keyName);
-                    // ..., key, value
-                }
-                lua_pop(L, 1); // pops value
-            }
-            // ..., table, metatable, __prototype
-            lua_pop(L, 2); // pops __prototype and metatable
-        } else {
-            lua_pop(L, 1); // pops metatable
-        }
-
-        int argTableFieldCount = getNumOfTableFields(L, tableIndex);
-
-        if (argTableFieldCount != baseFieldCount) {
-            std::cout << "argTableFieldCount: " << argTableFieldCount << " baseFieldCount: " << baseFieldCount << std::endl;
-            lua_pushstring(L, componentName);
-            luaL_error(
-                L, 
-                "An error occurred while instantiating the component %s. Check if the constructor matches the component registered.",
-                lua_tostring(L, -1)
-            );
-        }
-
-        lua_newtable(L);
-        lua_pushinteger(L, componentId);
-        lua_setfield(L, -2, "__compId");
-        lua_pushstring(L, componentName);
-        lua_setfield(L, -2, "__compName");
-        lua_setmetatable(L, tableIndex);
-        return 1;
-    }
-
-    static int componentConstructor(lua_State *L) {
-        // create a table if there was no argTable
-        if (1 == lua_gettop(L)) {
-            lua_newtable(L);
-        }
-
-        lua_getmetatable(L, 1);
         lua_getfield(L, -1, "__compId");
         ComponentId componentId = lua_tointeger(L, -1);
         lua_getfield(L, -2, "__compName");
@@ -197,6 +121,42 @@ namespace nebula {
         return 1;
     }
 
+    static int addLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx) {
+        if (!lua_istable(L, cTabIdx)) {
+            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is a registered Component.");
+        }
+
+        if(!lua_getmetatable(L, cTabIdx)) {
+            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is a registered Component.");
+        }
+        // ..., metatable
+        lua_getfield(L, -1, "__compId");
+        if (!lua_isinteger(L, -1)) {
+            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is a registered Component.");
+        }
+        ComponentId componentId = lua_tointeger(L, -1);
+
+        lua_getfield(L, -2, "__compName");
+        if (!lua_isstring(L, -1)) {
+            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is a registered Component.");
+        }
+        const char* componentName = lua_tostring(L, -1);
+        
+        // ..., metatable, __compId, __compName
+        lua_pop(L, 3); // pops metatable, __compId, __compName
+
+        ComponentId ecsCompId = ecs()->componentExists(componentName);
+
+        if (ecsCompId != componentId) {
+            luaL_error(L, "The Component does not match the ECS Registry. Check if the parameter is a registered Component.");
+        }
+
+        lua_pushvalue(L, cTabIdx); // pushes the table to create a ref
+        ecs()->addComponentSafe(entId, ecsCompId, LuaTableRef{luaL_ref(L, LUA_REGISTRYINDEX)});
+
+        return 0;
+    }
+
     int w_spawn(lua_State *L) {
         lua_pushnumber(L, ecs()->spawn());
         return 1;
@@ -219,9 +179,6 @@ namespace nebula {
 
         int fieldCount = getNumOfTableFields(L, 2);
 
-        lua_pushcfunction(L, componentNew);
-        lua_setfield(L, 2, "new");
-
         // metatable
         lua_newtable(L);
         lua_pushcfunction(L, componentConstructor);
@@ -235,23 +192,33 @@ namespace nebula {
         lua_pushinteger(L, fieldCount);
         lua_setfield(L, -2, "__fieldCount");
         lua_setmetatable(L, -2);
+
+        lua_pushcfunction(L, componentConstructor);
+        lua_setfield(L, 2, "new");
         return 1;
     }
 
     int w_addComponent(lua_State *L) {
-        EntityId entId = luaL_checkinteger(L, 1);
-
-        luaL_checktype(L, 2, LUA_TTABLE);
-
-        if (!lua_getmetatable(L, 2)) {
-            luaL_error(L, "Component table missing metatable");
+        if (!lua_isinteger(L, 1)) {
+            luaL_error(L, "Not a valid EntityID.");
         }
-        lua_getfield(L, -1, "__compName");
-        const char* componentName = lua_tostring(L, -1);
 
-        lua_pop(L, 2);
+        int entId = lua_tointeger(L, 1);
 
-        //ecs()->addComponent(entId, componentName);
+        if (entId < 0) {
+            luaL_error(L, "Not a valid EntityID.");
+        }
+
+        if (!ecs()->exists(entId)) {
+            luaL_error(L, "Not a valid EntityID.");
+        }
+
+        const int numArgs = lua_gettop(L);
+
+        for (int i = 2; i <= numArgs; i ++) {
+            addLuaComponent(L, entId, i);
+        }
+
         return 0;
     }
 
