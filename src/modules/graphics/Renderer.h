@@ -5,10 +5,10 @@
 #include <iostream>
 
 #include "../Ecs/World.hpp"
+#include "../Ecs/RenderComponents.hpp"
 #include "Camera.h"
 #include "Shader.h"
 #include "Texture.h"
-#include "RenderComponents.hpp"
 
 namespace nebula {
     namespace graphics {

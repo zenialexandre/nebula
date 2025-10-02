@@ -1,18 +1,19 @@
 #include "WrapGraphics.hpp"
 
-//#define graphics() (Module)
-
 namespace nebula {
+
+#define graphics() (Module::getInstance<graphics::Graphics>(GRAPHICS))
+
     namespace graphics {
 
 int w_draw(lua_State *L) {
     ecs::EntityId id = (ecs::EntityId) lua_touserdata(L, 1);
-    //graphics()->draw(id);
+    graphics()->draw(id);
     return 0;
 }
 
 static const luaL_Reg functions[] = {
-    {"draw", }
+    {"draw", w_draw}
 };
 
 extern "C" int nlua_graphics(lua_State *L) {

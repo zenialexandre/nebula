@@ -50,6 +50,13 @@ inline ComponentId getNewId(ComponentIdIndex *index) {
     return id;
 };
 
+inline ComponentId getNewId(ComponentIdIndex *index, const char* componentName) {
+    ComponentId id = index->nextId ++;
+    std::string s = componentName;
+    index->typeIdIndex.insert({s, id});
+    return id;
+};
+
 template <typename T>
 inline ComponentId getComponentId(ComponentIdIndex *index) {
     if (index->typeIdIndex.count(std::string(typeid(T).name())) == 0) {
@@ -57,6 +64,15 @@ inline ComponentId getComponentId(ComponentIdIndex *index) {
     }
     return index->typeIdIndex[std::string(typeid(T).name())];
 };
+
+inline ComponentId getComponentId(ComponentIdIndex *index, const char* componentName) {
+    std::string s = componentName;
+    if (index->typeIdIndex.count(s) == 0) {
+        return 0;
+    }
+    return index->typeIdIndex[s];
+};
+
 
 struct TableIdIndex {
     TableId nextId;

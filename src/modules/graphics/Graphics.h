@@ -4,6 +4,7 @@
 #include <SDL3/SDL.h>
 
 #include "../Ecs/World.hpp"
+#include "../Common/Module.hpp"
 #include "Shader.h"
 #include "Camera.h"
 #include "Renderer.h"
@@ -15,7 +16,7 @@
 namespace nebula {
     namespace graphics {
 
-class Graphics {
+class Graphics : public Module {
 public:
     Graphics(int width, int height);
     ~Graphics();

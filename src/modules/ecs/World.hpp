@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <iostream>
 
+#include "../Common/Module.hpp"
 #include "Table.hpp"
 #include "Type.hpp"
 #include "IdStorage.hpp"
@@ -14,10 +15,11 @@ namespace nebula {
 
 using TableMap = unordered_map<TableId, TableRecord*>;
 
-struct World {
+struct World : public Module {
 public:
     World() 
-        : entity_index(NULL)
+        : Module(ECS, "ecs")
+        , entity_index(NULL)
         , component_index(NULL) 
         , entityIdIndex(nullptr) {
         initWorld();
@@ -69,6 +71,59 @@ public:
         r->row = ent_index;
         r->table = newTable;
         newTable->entities.emplace_back(id);
+    }
+
+    template <typename T>
+    void addComponent(EntityId id, const char *name, T t) {
+        if(this->entity_index.count(id) == 0) { // Entity does not exist
+            return;
+        }
+        Record *r = this->entity_index[id];
+        ComponentId c_id = getComponentId(this->componentIdIndex, name);
+        if(!c_id) { // Component not yet registered
+            c_id = getNewId(this->componentIdIndex, name); // So register it here
+            this->component_index.insert({c_id, new TableMap()}); // Saving it on component_index
+        }
+        if(this->hasComponent(id, c_id)) { // Entity already has this component, so we override it
+            uint32_t compIndex = this->getComponentColumn(c_id, r->table);
+            Column<T>* col = (Column<T>*)r->table->columns.at(compIndex);
+            col->data.at(r->row) = t;
+            return;
+        }
+        // Entity does not have this component, which means we need to:
+        // -> check if there is a table with those components
+        //    -> if so, move the entity to this table
+        //    -> if not, create a new table and then move the entity
+        // -> delete the entity data on the old table
+        // -> update entity data in entity_index
+        // -> create component data in component_index for the new table
+        //TODO if not check/create edges
+
+        // v This could be the move_entity func
+        uint32_t ent_index = r->row;
+        Table *oldTable = r->table;
+        Type newType = getNewTypeAdd(oldTable->type, c_id);
+        Table* newTable = ensureTable(newType);
+        this->moveTableComponentsAdd<T>(id, ent_index, oldTable, newTable, t);
+        oldTable->entities.erase(oldTable->entities.begin() + ent_index); // Check
+        this->rearrangeTableEntities(oldTable, ent_index);
+        ent_index = newTable->entities.size();
+        r->row = ent_index;
+        r->table = newTable;
+        newTable->entities.emplace_back(id);
+    }
+
+    ComponentId registerComponent(const char *name) {
+        ComponentId c_id = getComponentId(this->componentIdIndex, name);
+        if(!c_id) { // Component not yet registered
+            c_id = getNewId(this->componentIdIndex, name); // So register it here
+            this->component_index.insert({c_id, new TableMap()}); // Saving it on component_index
+        }
+        return c_id;
+    }
+
+    ComponentId componentExists(const char *name) {
+        return getComponentId(this->componentIdIndex, name);
     }
 
     template <typename T>

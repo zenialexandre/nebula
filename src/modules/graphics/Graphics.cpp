@@ -5,7 +5,8 @@ namespace nebula {
 
 
 Graphics::Graphics(int width, int height)
-            : defaultShader(nullptr)
+            : Module(GRAPHICS, "graphics")
+            , defaultShader(nullptr)
             , defaultCamera(nullptr)
             , renderer(nullptr)
             , width(width)

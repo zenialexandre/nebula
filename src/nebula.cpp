@@ -1,15 +1,13 @@
 #include <SDL3/SDL.h>
-#include <glad/glad.h>
 #include <iostream>
-#include <Window/window.h>
+
+#include <Scripts/NebulaSetup.hpp>
 #include <Graphics/Shader.h>
 #include <Graphics/Texture.h>
-#include <Graphics/Graphics.h>
-#include <Ecs/World.hpp>
+
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "modules/scripts/NebulaSetup.hpp"
 
 extern "C" {
     #include <lua.h>
@@ -33,7 +31,7 @@ void cleanup(State &s) {
     SDL_Quit();
 }
 
-bool setup(State &s) {
+bool setup2(State &s) {
     s.window.setWindow();
 
     if (!s.graphics.initialize()) {
@@ -80,7 +78,7 @@ int main2() {
         nebula::graphics::Graphics(800, 600),
         nebula::ecs::World()
     };
-    if (!setup(s)) {
+    if (!setup2(s)) {
         cleanup(s);
         return 1;
     }
@@ -103,13 +101,14 @@ int main2() {
     return 0;
 }
 
-static void nlua_PackagePreload(lua_State *L, lua_CFunction func, const char *packName) {
+static int nlua_packagePreload(lua_State *L, lua_CFunction func, const char *packName) {
     // standard lua table "package"
     lua_getglobal(L, "package"); // places table at the top of stack
     lua_getfield(L, -1, "preload"); // retrieves the "preload" field from the table at the top of stack (-1)
     lua_pushcfunction(L, func);
     lua_setfield(L, -2, packName); // saves func on package at packName (key)
     lua_pop(L, 2); // pops 2 elements from the stack
+    return 0;
 }
 
 
@@ -119,13 +118,28 @@ static RunAction runNebula(int argc, char **argv, int &mainReturn) {
     lua_State *L = luaL_newstate();
     luaL_openlibs(L);
 
-    nlua_PackagePreload(L, nlua_nebula, "nebula");
+    nlua_packagePreload(L, nlua_nebula, "nebula");
+
+    lua_getglobal(L, "require");
+    lua_pushstring(L, "nebula");
+    lua_call(L, 1, 1);
+
+    lua_pop(L, 1);
+
+    lua_getglobal(L, "require");
+	lua_pushstring(L, "nebula.boot");
+	lua_call(L, 1, 1);
+
+    lua_close(L);
 
     return QUIT;
 }
 
 int main(int argc, char **argv) {
     int mainReturn = 0;
+
+    nebula::setup();
+
     RunAction action = RUN;
 
     do {

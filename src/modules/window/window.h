@@ -1,15 +1,15 @@
-#ifndef WINDOW_H
-#define WINDOW_H
+#pragma once
+
+#include "../Common/Module.hpp"
 
 #include <string>
-
 #include <SDL3/SDL.h>
 
 namespace nebula {
 
 namespace window {
 
-class Window final {
+class Window : Module {
 public:
     Window();
     ~Window();
@@ -34,5 +34,3 @@ private:
 
 }
 }
-
-#endif

@@ -4,7 +4,8 @@ namespace nebula {
     namespace window {
 
 Window::Window()
-        : title("nebula")
+        : Module(WINDOW, "window")
+        , title("nebula")
         , window(nullptr)
         , glContext(nullptr) {
     
