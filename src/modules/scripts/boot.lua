@@ -1,7 +1,5 @@
 local nebula = require("nebula")
 
-print("[LUA] Achou")
-
 function sleep(sec)
     local s = tonumber(os.clock() + sec)
     while (os.clock() < sec)do
@@ -28,22 +26,41 @@ require("nebula.ecs")
 local Pos = nebula.ecs.component("Pos", {x = 20; y = 30})
 local Vel = nebula.ecs.component("Vel", {x = 0})
 
-local pos1 = Pos()
-local pos2 = Pos({x = 100})
-local pos3 = Pos({x = 50; y = 50})
+local pos1 = Pos({x = 0; y = 0})
+local entity = nebula.ecs.spawn()
 
-local pos4 = Pos:new()
-local pos5 = Pos:new({x = 100})
-local pos6 = Pos:new({x = 50; y = 50})
+nebula.ecs.addComponent(entity, pos1, Pos({x = 210; y = 30}), pos1, Vel:new({x = 1000}))
 
-debugPos(pos1, "POS 1", 20, 30)
-debugPos(pos2, "POS 2", 100, 30)
-debugPos(pos3, "POS 3", 50, 50)
-debugPos(pos4, "POS 4", 20, 30)
-debugPos(pos5, "POS 5", 100, 30)
-debugPos(pos6, "POS 6", 50, 50)
+local entPos = nebula.ecs.getComponent(entity, Pos)
 
---nebula.ecs.print()
+local entPos, entVel = nebula.ecs.getComponent(entity, Pos, Vel)
+print(entPos.x)
+print(entPos.y)
+print(entVel.x)
+
+print("-------------")
+
+local ent2 = nebula.ecs.spawn()
+nebula.ecs.addComponent(ent2, pos1, Pos({x = 210; y = 30}), Vel:new({x = 1000}))
+local entPos2, entVel2 = nebula.ecs.getComponent(ent2, Pos, Vel)
+print(entPos2.x)
+print(entPos2.y)
+print(entVel2.x)
+
+local ent3 = nebula.ecs.spawn()
+nebula.ecs.addComponent(ent3, Pos())
+
+local ent4 = nebula.ecs.spawn()
+nebula.ecs.addComponent(ent4, Vel())
+
+nebula.ecs.removeComponent(ent2, Vel, Pos)
+nebula.ecs.removeComponent(entity, Pos)
+nebula.ecs.removeComponent(entity, Pos)
+nebula.ecs.removeComponent(entity, Vel)
+
+nebula.ecs.print()
+
+
 
 --print(nebula.time.tick())
 --sleep(3)

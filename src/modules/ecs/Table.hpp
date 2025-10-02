@@ -18,6 +18,7 @@ struct ColumnBase { // Type erasure struct
 template<typename T>
 struct Column : ColumnBase {
     std::vector<T> data;                /* Array with component data */
+    std::string name;                  /* Optional name */
 
     size_t size() const {               /* Size of the component data */
         return data.size();
@@ -30,12 +31,14 @@ struct Column : ColumnBase {
     }
 
     ColumnBase* createClone() const {   /* Function to create an empty clone (used when creating another table) */
-        return new Column<T>();
+        return new Column<T>(name);
     }
 
     void debug() const {
-        std::cout << typeid(T).name();
+        std::cout << name;
     }
+
+    Column(std::string name) : name(name) {};
 };
 
 // Table === Archetype

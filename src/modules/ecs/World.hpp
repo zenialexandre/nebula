@@ -193,6 +193,29 @@ public:
     }
 
     template <typename T>
+    void removeComponentSafe(EntityId id, ComponentId c_id) {
+        if(this->entity_index.count(id) == 0) { // Entity does not exist
+            return;
+        }
+        if(!this->hasComponent(id, c_id)) { // Entity doesn't have this component
+            return;
+        }
+        Record *r = this->entity_index[id];
+        Table *oldTable = r->table;
+        uint32_t componentIdx = getComponentColumn(c_id, oldTable);
+        Type newType = getNewTypeRemove(oldTable->type, componentIdx);
+        Table* newTable = ensureTable(newType);
+        uint32_t ent_index = r->row;
+        this->moveTableComponentsRemove<T>(id, ent_index, oldTable, newTable, componentIdx);
+        oldTable->entities.erase(oldTable->entities.begin() + ent_index);
+        this->rearrangeTableEntities(oldTable, ent_index);
+        ent_index = newTable->entities.size();
+        r->row = ent_index;
+        r->table = newTable;
+        newTable->entities.emplace_back(id);
+    }
+
+    template <typename T>
     T* getComponent(EntityId id) {
         if(this->entity_index.count(id) == 0) { // Entity does not exist
             return nullptr;
@@ -213,11 +236,41 @@ public:
     }
 
     template <typename T>
+    T* getComponentSafe(EntityId id, ComponentId c_id) {
+        if(this->entity_index.count(id) == 0) { // Entity does not exist
+            return nullptr;
+        }
+        Record *r = this->entity_index[id];
+        //ComponentId c_id = getComponentId<T>(this->componentIdIndex);
+        //if (!c_id) { // Component does not exist
+        //    return nullptr; 
+        //}
+        Table* table = r->table;
+        TableMap* tabMap = this->component_index[c_id];
+        if (tabMap->count(table->id) == 0) { // Entity does not have this component
+            return nullptr;
+        }
+        TableRecord* tabRec = tabMap->at(table->id);
+        Column<T>* col = (Column<T>*)table->columns.at(tabRec->column);
+        return &col->data.at(r->row);
+    }
+
+    template <typename T>
     bool hasComponent(EntityId id) {
         if(this->entity_index.count(id) == 0) { // Entity does not exist
             return false;
         }
         ComponentId c_id = getComponentId<T>(this->componentIdIndex);
+        if(!c_id) { // Component not yet registered
+            return false;
+        }
+        return this->hasComponent(id, c_id);
+    }
+
+    bool hasComponentSafe(EntityId id, ComponentId c_id) {
+        if(this->entity_index.count(id) == 0) { // Entity does not exist
+            return false;
+        }
         if(!c_id) { // Component not yet registered
             return false;
         }
@@ -244,12 +297,12 @@ public:
         std::cout << "---- TABLE INDEX ----" << std::endl;
         for (auto const &tabPair : this->table_index) {
             std::cout << "Table: " << tabPair.second->id << "\n";
-            std::cout << "      > Entities (" << tabPair.second->entities.size() << "): ";
+            std::cout << "      > Entities(" << tabPair.second->entities.size() << "): ";
             for (EntityId entId : tabPair.second->entities) {
                 std::cout << entId << " ";
             }
             std::cout << "\n";
-            std::cout << "      > Components : ";
+            std::cout << "      > Components(" << tabPair.second->type.size() << "): ";
             for (ComponentId compId : tabPair.second->type) {
                 std::cout << compId << " ";
             }
@@ -329,6 +382,7 @@ private:
         T newComponentData
     ) {
         for (ComponentId cId : newTable->type) {
+            std::string name = getComponentName(this->componentIdIndex, cId);
             if (tableHasComponent(cId, oldTable)) { // components from previous table
                 // get component index on the table
                 uint32_t compIndex = this->getComponentColumn(cId, oldTable);
@@ -354,7 +408,7 @@ private:
                     col->data.emplace_back(newComponentData);
                 } else { // in case this is a new table
                     uint32_t index = newTable->columns.size();
-                    Column<T>* col = new Column<T>();
+                    Column<T>* col = new Column<T>(name);
                     col->data.emplace_back(newComponentData);
                     newTable->columns.emplace_back(col);
                     this->saveComponentColumn(cId, newTable, index);
