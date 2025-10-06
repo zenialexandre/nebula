@@ -21,6 +21,7 @@ add_library(nebula_common STATIC
     src/modules/common/Module.cpp
     src/modules/common/Module.hpp
     src/modules/common/WrapModule.hpp
+    src/modules/common/WrapType.hpp
     src/modules/common/LuaBidings.hpp
 )
 target_link_libraries(nebula_common PUBLIC
@@ -58,6 +59,12 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/World.hpp
     src/modules/ecs/WrapWorld.hpp
     src/modules/ecs/WrapWorld.cpp
+    src/modules/ecs/WrapPosition.hpp
+    src/modules/ecs/WrapPosition.cpp
+    src/modules/ecs/WrapScale.hpp
+    src/modules/ecs/WrapScale.cpp
+    src/modules/ecs/WrapQuad.hpp
+    src/modules/ecs/WrapQuad.cpp
     src/modules/ecs/RenderComponents.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC

@@ -288,6 +288,13 @@ public:
         return getEntitiesWithMultiple<T, Ts...>();
     }
 
+    const std::vector<EntityId> getEntitiesWithSafe(std::vector<ComponentId> &compIds) const {
+        if (compIds.size() == 1) {
+            return getEntitiesWithOneSafe(compIds.at(0));
+        }
+        return getEntitiesWithMultipleSafe(compIds);
+    }
+
     void print() {
         std::cout << "---- ENTITY INDEX ----" << std::endl;
         for (auto const &entPair : this->entity_index) {
@@ -489,6 +496,19 @@ private:
         return returnVec;
     }
 
+    const std::vector<EntityId> getEntitiesWithOneSafe(const ComponentId c_id) const {
+        std::vector<EntityId> returnVec {};
+        if(!c_id) { // Component not yet registered
+            return returnVec;
+        }
+        TableMap tabMap = *this->component_index.at(c_id);
+        for (auto tableInfo : tabMap) {
+            Table* table = this->table_index.at(tableInfo.first);
+            returnVec.insert(returnVec.end(), table->entities.begin(), table->entities.end());
+        }
+        return returnVec;
+    }
+
     template <typename T>
     TableMap* getComponentTableMap() const {
         ComponentId c_id = getComponentId<T>(this->componentIdIndex);
@@ -521,6 +541,42 @@ private:
             // tabMapPair.first = TableId
             // "looping" through a parameter pack
             (this->tableHasComponent<Ts>(tabMapPair.first, &checkTables), ...);
+            if (!checkTables) {
+                continue;
+            }
+            Table* table = this->table_index.at(tabMapPair.first);
+            for (EntityId id : table->entities) {
+                returnVec.emplace_back(id);
+            }
+        }
+        return returnVec;
+    }
+
+    TableMap *getComponentTableMapSafe(ComponentId c_id) const {
+        if(!c_id) { // Component not yet registered
+            return nullptr;
+        }
+        return this->component_index.at(c_id);
+    }
+
+    const std::vector<EntityId> getEntitiesWithMultipleSafe(std::vector<ComponentId> &compIds) const {
+        TableMap* tabMap = this->getComponentTableMapSafe(compIds.at(0));
+        if (!tabMap) { // In case the first component is not registered, we return an empty vec
+            return {};
+        }
+        compIds.erase(compIds.begin());
+        // If the first component is registered, continue
+        std::vector<EntityId> returnVec {};
+        for (const auto& tabMapPair : *tabMap) {
+            // tabMapPair.first = TableId
+            bool checkTables = true;
+            for (ComponentId c_id : compIds) {
+                TableMap *c_tabMap = this->getComponentTableMapSafe(c_id);
+                if (!c_tabMap) {
+                    return {};
+                }
+                checkTables = checkTables && c_tabMap->count(tabMapPair.first);
+            }
             if (!checkTables) {
                 continue;
             }

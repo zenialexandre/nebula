@@ -16,6 +16,11 @@ extern "C" {
 namespace nebula {
     static bool setup() {
         ecs::World *world = new ecs::World();
+
+        world->registerComponent("Position");
+        world->registerComponent("Scale");
+        world->registerComponent("Quad");
+        world->registerComponent("Sprite");
         
         window::Window *window = new window::Window();
         window->setWindow();

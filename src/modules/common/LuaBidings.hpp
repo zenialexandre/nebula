@@ -1,6 +1,7 @@
 #pragma once
 
 #include "WrapModule.hpp"
+#include "WrapType.hpp"
 #include <iostream>
 
 extern "C" {
@@ -36,6 +37,25 @@ static int ensure(lua_State *L, int idx, const char *name) {
         lua_setfield(L, idx, name);
     }
 
+    return 1;
+}
+
+static int ensureTypeRegistry(lua_State *L) {
+    lua_getfield(L, LUA_REGISTRYINDEX, "_nebulaTypes");
+    if (!lua_istable(L, -1)) {
+        lua_newtable(L);
+		lua_replace(L, -2);
+		lua_newtable(L);
+
+		lua_pushliteral(L, "v");
+		lua_setfield(L, -2, "__mode");
+
+		lua_setmetatable(L, -2);
+
+		lua_setfield(L, LUA_REGISTRYINDEX, "_nebulaTypes");
+    } else {
+        lua_pop(L, 1);
+    }
     return 1;
 }
 
@@ -88,6 +108,30 @@ static int w_gc(lua_State *L) {
     return 0;
 }
 
+static int registerType(lua_State *L, WrapType &wType) {
+    ensureTypeRegistry(L);
+
+    luaL_newmetatable(L, wType.name);
+
+    lua_pushvalue(L, -1);
+	lua_setfield(L, -2, "__index");
+
+    if (wType.funcs != nullptr) {
+        registerFuncs(L, wType.funcs);
+    }
+
+    if (wType.fields != nullptr) {
+        for (const luaL_Reg* fieldFunc = wType.fields; fieldFunc->name != nullptr; fieldFunc++) {
+            fieldFunc->func(L);
+            lua_setfield(L, -2, fieldFunc->name);
+        }
+    }
+
+    lua_pop(L, 1);
+
+    return 0;
+}
+
 static int registerModule(lua_State *L, WrapModule &wModule) {
     ensureModuleRegistry(L);
 
@@ -110,6 +154,12 @@ static int registerModule(lua_State *L, WrapModule &wModule) {
 
     if (wModule.funcs != nullptr) {
         registerFuncs(L, wModule.funcs);
+    }
+
+    if (wModule.types != nullptr) {
+        for (const lua_CFunction *type = wModule.types; *type != nullptr; type++) {
+            (*type)(L); // dereference pointer and call it with lua_State
+        }
     }
 
     lua_pushvalue(L, -1);

@@ -1,14 +1,37 @@
 #include "WrapWorld.hpp"
-#include <iostream>
+#include "WrapPosition.hpp"
+#include "WrapScale.hpp"
+#include "WrapQuad.hpp"
 
-struct LuaTableRef {
-    int luaRefBaseTable = LUA_NOREF;
-};
+#include <iostream>
 namespace nebula {
 
 #define ecs() (ModuleRegistry::getInstance<ecs::World>(ECS))
 
 	namespace ecs {
+
+    enum ComponentValidationMethod {
+        DEFINITION,
+        INSTANCE
+    };
+
+    enum ComponentType {
+        NEBULA_DEFINED,
+        USER_DEFINED
+    };
+
+    // explicitly showing the integer values, even though it is not needed
+    enum NebulaComponents {
+        NONE = 0,
+        POSITION = 1,
+        SCALE = 2,
+        QUAD = 3,
+        SPRITE = 4
+    };
+
+    struct LuaTableRef {
+        int luaRefBaseTable = LUA_NOREF;
+    };
 
     //struct LuaComponentMetadata {
     //    const char *name;
@@ -38,6 +61,22 @@ namespace nebula {
     //    luaComponentEntityMap.insert({compId, compEntId});
     //    return 0;
     //}
+
+    static bool isNebulaComponent(std::string name) {
+        if (name == "Position") {
+            return true;
+        }
+        if (name == "Scale") {
+            return true;
+        }
+        if (name == "Quad") {
+            return true;
+        }
+        if (name == "Sprite") {
+            return true;
+        }
+        return false;
+    }
 
     static EntityId getLuaEntityId(lua_State *L, const int entIdIdx) {
         if (!lua_isnumber(L, 1)) {
@@ -134,117 +173,185 @@ namespace nebula {
         lua_setfield(L, -2, "__compId");
         lua_pushstring(L, componentName);
         lua_setfield(L, -2, "__compName");
-        //lua_pushcfunction(L, componentInstanceDestructor);
-        //lua_setfield(L, -2, "__gc");
         lua_setmetatable(L, -2);
         return 1;
     }
 
-    static int addLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx) {
-        if (!lua_istable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is an instance of a registered Component.");
+    static int nebulaComponentConstructor(lua_State *L) {
+        int argsCount = lua_gettop(L);
+
+        if (argsCount == 0) {
+            luaL_error(L, "An error occurred while instantiating a component. Use 'Component:new()' instead of 'Component.new()'.");
         }
 
-        if(!lua_getmetatable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is an instance of a registered Component.");
+        if (argsCount > 2) {
+            luaL_error(L, "An error occurred while instantiating a component. Use 'Component:new()', 'Component:new(table)', 'Component()' or 'Component(table)'.");
         }
-        // ..., metatable
-        lua_getfield(L, -1, "__fieldCount");
-        if (!lua_isnil(L, -1)) {
-            luaL_error(L, "An error occurred while getting a Component. Check if the parameter is an instance of a registered Component. Try using Component() instead of Component.");
+
+        if(!lua_getmetatable(L, 1)) {
+            luaL_error(L, "An error occurred while instantiating a component. Use 'Component:new()' instead of 'Component.new()'.");
         }
-        lua_pop(L, 1);
 
         lua_getfield(L, -1, "__compId");
+        ComponentId componentId = lua_tointeger(L, -1);
+        lua_pop(L, 2);
+
+        if (componentId == POSITION) {
+            return positionConstructor(L, argsCount == 1);
+        }
+        if (componentId == SCALE) {
+            return scaleConstructor(L, argsCount == 1);
+        }
+
+        return 1;
+    }
+
+    static void validateLuaComponent(lua_State *L, const int cTabIdx, ComponentValidationMethod cvm) {
+        if (!lua_istable(L, cTabIdx) && !lua_isuserdata(L, cTabIdx)) {
+            luaL_error(L, "An error occurred while finding a Component: Missing data. Check if the parameter is a nebula Component.");
+        }
+        if(!lua_getmetatable(L, cTabIdx)) {
+            luaL_error(L, "An error occurred while finding a Component: Missing metatable. Check if the parameter is a nebula Component.");
+        }
+        // ..., metatable
+        lua_getfield(L, -1, "__call");
+        if (cvm == DEFINITION) {
+            if (!lua_iscfunction(L, -1)) {
+                luaL_error(L, "An error occurred while finding a Component: Missing metadata. Check if the parameter is a nebula Component.");
+            }
+        }
+        if (cvm == INSTANCE) {
+            if (!lua_isnil(L, -1)) {
+                luaL_error(L, "An error occurred while finding a Component: Found wrong metadata. Check if the parameter is an instance of a nebula Component. Try using Component() instead of Component.");
+            }
+        }
+        lua_pop(L, 2);
+    }
+
+    static ComponentId getLuaComponentMetadataId(lua_State *L, const int cTabIdx) {
+        lua_getmetatable(L, cTabIdx);
+        lua_getfield(L, -1, "__compId");
         if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is an instance of a registered Component.");
+            luaL_error(L, "An error occurred while finding a Component: Missing metadata 'ID'. Check if the parameter is a nebula Component.");
         }
         ComponentId componentId = lua_tointeger(L, -1);
-        lua_pop(L, 1);
+        lua_pop(L, 2);
+        return componentId;
+    }
 
+    static const char *getLuaComponentMetadataName(lua_State *L, const int cTabIdx) {
+        lua_getmetatable(L, cTabIdx);
         lua_getfield(L, -1, "__compName");
         if (!lua_isstring(L, -1)) {
-            luaL_error(L, "An error occurred while adding a Component. Check if the parameter is an instance of a registered Component.");
+            luaL_error(L, "An error occurred while finding a Component: Missing metadata 'Name'. Check if the parameter is a nebula Component.");
         }
         const char* componentName = lua_tostring(L, -1);
-        
-        // ..., metatable, __compName
-        lua_pop(L, 2); // pops metatable, __compName
+        lua_pop(L, 2);
+        return componentName;
+    }
 
-        ComponentId ecsCompId = ecs()->componentExists(componentName);
+    static ComponentId getLuaComponentId(lua_State *L, const int cTabIdx, const int metadataId, const char *metadataName) {
+        ComponentId ecsCompId = ecs()->componentExists(metadataName);
 
-        if (ecsCompId != componentId) {
+        if (ecsCompId != metadataId) {
             luaL_error(L, "The Component does not match the ECS Registry. Check if the parameter is an instance of a registered Component.");
         }
 
+        return ecsCompId;
+    }
+
+    template <typename T>
+    static int addNebulaComponent(lua_State *L, const EntityId entId, const int cTabIdx, const ComponentId safeComponentId, const char *metadataName) {
+        T *pointer = (T*)luaL_checkudata(L, cTabIdx, metadataName);
+        if(pointer == nullptr) {
+            lua_pushstring(L, metadataName);
+            luaL_error(L, "Pointer to %s is a null pointer.");
+        }
+        ecs()->addComponentSafe(entId, safeComponentId, *pointer);
+        return 0;
+    }
+
+    static int addLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx) {
+        validateLuaComponent(L, cTabIdx, INSTANCE);
+        ComponentId metadataId = getLuaComponentMetadataId(L, cTabIdx);
+        const char *metadataName = getLuaComponentMetadataName(L, cTabIdx);
+
+        ComponentId safeComponentId = getLuaComponentId(L, cTabIdx, metadataId, metadataName);
+    
+        if (safeComponentId == POSITION) {
+            return addNebulaComponent<Position>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
+        if (safeComponentId == SCALE) {
+            return addNebulaComponent<Scale>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
+        if (safeComponentId == QUAD) {
+            return addNebulaComponent<Quad>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
+        if (safeComponentId == SPRITE) {
+            return addNebulaComponent<Sprite>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
+
         lua_pushvalue(L, cTabIdx); // pushes the table to create a ref
-        ecs()->addComponentSafe(entId, ecsCompId, LuaTableRef{luaL_ref(L, LUA_REGISTRYINDEX)});
+        ecs()->addComponentSafe(entId, safeComponentId, LuaTableRef{luaL_ref(L, LUA_REGISTRYINDEX)});
 
         return 0;
     }
 
-    static LuaTableRef *getLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx) {
-        if (!lua_istable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while getting a Component. Check if the parameter is a registered Component.");
+    template <typename T>
+    static int getNebulaComponent(lua_State *L, const EntityId entId, const ComponentId safeComponentId, const char *metadataName) {
+        T* pointer = ecs()->getComponentSafe<T>(entId, safeComponentId);
+
+        if (pointer == nullptr) {
+            lua_pushstring(L, metadataName);
+            lua_pushinteger(L, (int)entId);
+            luaL_error(L, "The Component %s for Entity %i not found.");
         }
 
-        if(!lua_getmetatable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while getting a Component. Check if the parameter is a registered Component.");
-        }
-        // ..., metatable
-        lua_getfield(L, -1, "__fieldCount");
-        if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while getting a Component. Check if the parameter is a registered Component.");
-        }
-        lua_pop(L, 1);
+        lua_pushlightuserdata(L, pointer);
+        luaL_getmetatable(L, metadataName);
+        lua_setmetatable(L, -2);
+        return 1;
+    }
 
-        lua_getfield(L, -1, "__compId");
-        if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while getting a Component. Check if the parameter is a registered Component.");
-        }
-        ComponentId componentId = lua_tointeger(L, -1);
-        lua_pop(L, 1);
+    static int getLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx) {
+        validateLuaComponent(L, cTabIdx, DEFINITION);
 
-        lua_getfield(L, -1, "__compName");
-        if (!lua_isstring(L, -1)) {
-            luaL_error(L, "An error occurred while getting a Component. Check if the parameter is a registered Component.");
-        }
-        const char* componentName = lua_tostring(L, -1);
-        
-        // ..., metatable, __compName
-        lua_pop(L, 2); // pops metatable and __compName
+        ComponentId metadataId = getLuaComponentMetadataId(L, cTabIdx);
+        const char *metadataName = getLuaComponentMetadataName(L, cTabIdx);
 
-        ComponentId ecsCompId = ecs()->componentExists(componentName);
+        ComponentId safeComponentId = getLuaComponentId(L, cTabIdx, metadataId, metadataName);
 
-        if (ecsCompId == 0) {
-            lua_pushstring(L, componentName);
+        if (safeComponentId == 0) {
+            lua_pushstring(L, metadataName);
             luaL_error(L, "The Component %s does not exists anymore");
         }
 
-        if (ecsCompId != componentId) {
-            lua_pushstring(L, componentName);
-            luaL_error(L, "The Component %s does not match the ECS Registry. Check if the parameter is a registered Component.");
+        if (safeComponentId == POSITION) {
+            return getNebulaComponent<Position>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == SCALE) {
+            return getNebulaComponent<Scale>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == QUAD) {
+            return getNebulaComponent<Quad>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == SPRITE) {
+            return getNebulaComponent<Sprite>(L, entId, safeComponentId, metadataName);
         }
 
-        LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, componentId);
+        LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, safeComponentId);
 
         if (tabRef == nullptr) {
-            lua_pushstring(L, componentName);
+            lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
             luaL_error(L, "The Component %s for Entity %i not found.");
         }
 
         if (tabRef->luaRefBaseTable == LUA_NOREF) {
-            lua_pushstring(L, componentName);
+            lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
             luaL_error(L, "The Component %s for Entity %i does not exists anymore.");
         }
-
-        return tabRef;
-    }
-
-    static int getLuaComponentTable(lua_State *L, const EntityId entId, const int cTabIdx) {
-        LuaTableRef* tabRef = getLuaComponent(L, entId, cTabIdx);
 
         lua_rawgeti(L, LUA_REGISTRYINDEX, tabRef->luaRefBaseTable);
 
@@ -252,115 +359,49 @@ namespace nebula {
     }
 
     static void removeLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx) {
-        if (!lua_istable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while removing a Component. Check if the parameter is a registered Component.");
-        }
+        validateLuaComponent(L, cTabIdx, DEFINITION);
 
-        if(!lua_getmetatable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while removing a Component. Check if the parameter is a registered Component.");
-        }
-        // ..., metatable
-        lua_getfield(L, -1, "__fieldCount");
-        if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while removing a Component. Check if the parameter is a registered Component.");
-        }
-        lua_pop(L, 1);
+        ComponentId metadataId = getLuaComponentMetadataId(L, cTabIdx);
+        const char *metadataName = getLuaComponentMetadataName(L, cTabIdx);
 
-        lua_getfield(L, -1, "__compId");
-        if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while removing a Component. Check if the parameter is a registered Component.");
-        }
-        ComponentId componentId = lua_tointeger(L, -1);
-        lua_pop(L, 1);
+        ComponentId safeComponentId = getLuaComponentId(L, cTabIdx, metadataId, metadataName);
 
-        lua_getfield(L, -1, "__compName");
-        if (!lua_isstring(L, -1)) {
-            luaL_error(L, "An error occurred while removing a Component. Check if the parameter is a registered Component.");
-        }
-        const char* componentName = lua_tostring(L, -1);
-        
-        // ..., metatable, __compName
-        lua_pop(L, 2); // pops metatable and __compName
-
-        ComponentId ecsCompId = ecs()->componentExists(componentName);
-
-        if (ecsCompId == 0) {
-            lua_pushstring(L, componentName);
+        if (safeComponentId == 0) {
+            lua_pushstring(L, metadataName);
             luaL_error(L, "The Component %s does not exists anymore");
         }
 
-        if (ecsCompId != componentId) {
-            lua_pushstring(L, componentName);
-            luaL_error(L, "The Component %s does not match the ECS Registry. Check if the parameter is a registered Component.");
-        }
-
-        if (!ecs()->hasComponentSafe(entId, componentId)) {
+        if (!ecs()->hasComponentSafe(entId, safeComponentId)) {
             return;
         }
 
-        LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, componentId);
-
-        if (tabRef == nullptr) {
-            lua_pushstring(L, componentName);
-            lua_pushinteger(L, (int)entId);
-            luaL_error(L, "The Component %s for Entity %i not found.");
-        }
+        LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, safeComponentId);
 
         if (tabRef->luaRefBaseTable == LUA_NOREF) {
-            lua_pushstring(L, componentName);
+            lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
             luaL_error(L, "The Component %s for Entity %i does not exists anymore.");
         }
 
         luaL_unref(L, LUA_REGISTRYINDEX, tabRef->luaRefBaseTable);
 
-        ecs()->removeComponentSafe<LuaTableRef>(entId, componentId);
+        ecs()->removeComponentSafe<LuaTableRef>(entId, safeComponentId);
     }
 
     static void hasLuaComponent(lua_State *L, const EntityId entId, const int cTabIdx, bool *check) {
-        if (!lua_istable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while checking a Component. Check if the parameter is a registered Component.");
-        }
+        validateLuaComponent(L, cTabIdx, DEFINITION);
 
-        if(!lua_getmetatable(L, cTabIdx)) {
-            luaL_error(L, "An error occurred while checking a Component. Check if the parameter is a registered Component.");
-        }
-        // ..., metatable
-        lua_getfield(L, -1, "__fieldCount");
-        if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while checking a Component. Check if the parameter is a registered Component.");
-        }
-        lua_pop(L, 1);
+        ComponentId metadataId = getLuaComponentMetadataId(L, cTabIdx);
+        const char *metadataName = getLuaComponentMetadataName(L, cTabIdx);
 
-        lua_getfield(L, -1, "__compId");
-        if (!lua_isinteger(L, -1)) {
-            luaL_error(L, "An error occurred while checking a Component. Check if the parameter is a registered Component.");
-        }
-        ComponentId componentId = lua_tointeger(L, -1);
-        lua_pop(L, 1);
+        ComponentId safeComponentId = getLuaComponentId(L, cTabIdx, metadataId, metadataName);
 
-        lua_getfield(L, -1, "__compName");
-        if (!lua_isstring(L, -1)) {
-            luaL_error(L, "An error occurred while checking a Component. Check if the parameter is a registered Component.");
-        }
-        const char* componentName = lua_tostring(L, -1);
-        
-        // ..., metatable, __compName
-        lua_pop(L, 2); // pops metatable and __compName
-
-        ComponentId ecsCompId = ecs()->componentExists(componentName);
-
-        if (ecsCompId == 0) {
-            lua_pushstring(L, componentName);
+        if (safeComponentId == 0) {
+            lua_pushstring(L, metadataName);
             luaL_error(L, "The Component %s does not exists anymore");
         }
 
-        if (ecsCompId != componentId) {
-            lua_pushstring(L, componentName);
-            luaL_error(L, "The Component %s does not match the ECS Registry. Check if the parameter is a registered Component.");
-        }
-
-        *check = *check && ecs()->hasComponentSafe(entId, componentId);
+        *check = *check && ecs()->hasComponentSafe(entId, safeComponentId);
     }
 
     int w_spawn(lua_State *L) {
@@ -374,8 +415,39 @@ namespace nebula {
     }
 
     int w_component(lua_State *L) {
-        std::string luaCompPrefix = "lua_";
-        const char* compName = luaCompPrefix.append(std::string(luaL_checkstring(L, 1))).c_str();
+        const int numArgs = lua_gettop(L);
+        if (numArgs == 0) {
+            luaL_error(L, "Missing parameters");
+        }
+        const char *compName = luaL_checkstring(L, 1);
+        if (isNebulaComponent(compName)) {
+            if (numArgs > 1) {
+                lua_pushstring(L, compName);
+                luaL_error(L, "Component '%s' is already defined by Nebula, so it cannot be defined. Try using a different name or removing the second parameter.");
+            }
+
+            ComponentId compId = ecs()->componentExists(compName);
+            if (!compId) {
+                compId = ecs()->registerComponent(compName);
+            }
+
+            // table
+            lua_newtable(L);
+            // metatable
+            lua_newtable(L);
+            lua_pushcfunction(L, nebulaComponentConstructor);
+            lua_setfield(L, -2, "__call");
+            lua_pushinteger(L, compId);
+            lua_setfield(L, -2, "__compId");
+            lua_pushstring(L, compName);
+            lua_setfield(L, -2, "__compName");
+            lua_setmetatable(L, -2);
+
+            lua_pushcfunction(L, nebulaComponentConstructor);
+            lua_setfield(L, -2, "new");
+
+            return 1;
+        }
         luaL_checktype(L, 2, LUA_TTABLE);
 
         if (ecs()->componentExists(compName) != 0) {
@@ -426,7 +498,7 @@ namespace nebula {
         int returnCount = 0;
 
         for (int i = 2; i <= numArgs; i ++) {
-            returnCount += getLuaComponentTable(L, entId, i);
+            returnCount += getLuaComponent(L, entId, i);
         }
 
         return returnCount;
@@ -460,6 +532,43 @@ namespace nebula {
         return 1;
     }
 
+    int w_getEntitiesWith(lua_State *L) {
+        const int numArgs = lua_gettop(L);
+
+        lua_createtable(L, 0, 0);
+
+        if (numArgs == 0) {
+            return 1;
+        }
+
+        std::vector<ComponentId> components {};
+
+        for (int i = 1; i <= numArgs; i ++) {
+            validateLuaComponent(L, i, DEFINITION);
+
+            ComponentId metadataId = getLuaComponentMetadataId(L, i);
+            const char *metadataName = getLuaComponentMetadataName(L, i);
+
+            components.emplace_back(getLuaComponentId(L, i, metadataId, metadataName));
+        }
+
+        std::vector<EntityId> entities = ecs()->getEntitiesWithSafe(components);
+
+        if (entities.size() == 0) {
+            return 1;
+        }
+
+        lua_pop(L, 1);
+
+        lua_createtable(L, entities.size(), 0);
+        for (int i = 0; i < entities.size(); i++) {
+            lua_pushinteger(L, entities.at(i));
+            lua_rawseti(L, -2, i);
+        }
+
+        return 1;
+    }
+
     static const luaL_Reg functions[] = {
         {"spawn", w_spawn},
         {"print", w_print},
@@ -468,8 +577,15 @@ namespace nebula {
         {"getComponent", w_getComponent},
         {"removeComponent" , w_removeComponent},
         {"hasComponent", w_hasComponent},
-        //{"getEntitiesWith", w_getEntitiesWith},
+        {"getEntitiesWith", w_getEntitiesWith},
         {0, 0}
+    };
+
+    static const lua_CFunction types[] = {
+        nlua_ecs_position,
+        nlua_ecs_scale,
+        nlua_ecs_quad,
+        0
     };
 
 	extern "C" int nlua_ecs(lua_State *L) {
@@ -478,6 +594,7 @@ namespace nebula {
         WrapModule wModule;
         wModule.module = ecs;
         wModule.funcs = functions;
+        wModule.types = types;
 
         return registerModule(L, wModule);
     }

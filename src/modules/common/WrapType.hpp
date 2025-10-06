@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Module.hpp"
-
 extern "C" {
     #include <lua.h>
 	#include <lualib.h>
@@ -10,11 +8,11 @@ extern "C" {
 
 namespace nebula {
 
-struct WrapModule {
-    Module *module;
+struct WrapType {
+    const char *name;
 
     const luaL_Reg *funcs;
-    const lua_CFunction *types;
+    const luaL_Reg *fields;
 };
 
 } // nebula

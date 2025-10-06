@@ -46,6 +46,7 @@ extern "C" int nlua_time(lua_State *L) {
     WrapModule wModule;
     wModule.module = time;
     wModule.funcs = functions;
+    wModule.types = nullptr;
 
     return registerModule(L, wModule);
 }

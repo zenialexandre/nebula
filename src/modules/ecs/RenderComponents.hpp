@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "Texture.h"
+#include "../Graphics/Texture.h"
 
 // Built in component
 struct Position {
