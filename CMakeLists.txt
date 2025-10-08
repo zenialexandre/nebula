@@ -6,6 +6,9 @@ project(nebula VERSION 0.1.0)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_CXX_STANDARD 17)
 
+# Uncomment to use static lib
+option(BUILD_SHARED_LIBS OFF)
+
 add_library(glad STATIC 
     libs/glad/glad.c
     libs/glad/include/glad/glad.h
@@ -41,15 +44,6 @@ target_link_libraries(nebula_time PUBLIC
     nebula_common
 )
 
-add_library(nebula_window STATIC
-    src/modules/window/Window.cpp
-    src/modules/window/Window.h
-)
-target_link_libraries(nebula_window PUBLIC 
-    SDL3::SDL3
-    nebula_common
-)
-
 add_library(nebula_ecs STATIC
     src/modules/ecs/Hash.hpp
     src/modules/ecs/Definitions.hpp
@@ -65,6 +59,8 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/WrapScale.cpp
     src/modules/ecs/WrapQuad.hpp
     src/modules/ecs/WrapQuad.cpp
+    src/modules/ecs/WrapSprite.hpp
+    src/modules/ecs/WrapSprite.cpp
     src/modules/ecs/RenderComponents.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC
@@ -82,6 +78,10 @@ add_library(nebula_graphics STATIC
     src/modules/graphics/Texture.h
     src/modules/graphics/Shader.cpp
     src/modules/graphics/Shader.h
+    src/modules/graphics/WrapGraphics.cpp
+    src/modules/graphics/WrapGraphics.hpp
+    src/modules/graphics/WrapTexture.cpp
+    src/modules/graphics/WrapTexture.hpp
 )
 target_link_libraries(nebula_graphics PUBLIC 
     SDL3::SDL3
@@ -89,6 +89,22 @@ target_link_libraries(nebula_graphics PUBLIC
     glad
     nebula_ecs
     nebula_common
+)
+target_include_directories(nebula_graphics PUBLIC
+    resources/shaders/fragShader.glsl
+    resources/shaders/vertexShader.glsl
+)
+
+add_library(nebula_window STATIC
+    src/modules/window/Window.cpp
+    src/modules/window/Window.h
+    src/modules/window/WrapWindow.cpp
+    src/modules/window/WrapWindow.hpp
+)
+target_link_libraries(nebula_window PUBLIC 
+    SDL3::SDL3
+    nebula_common
+    nebula_graphics
 )
 
 add_library(nebula_data STATIC
@@ -111,6 +127,9 @@ target_link_libraries(nebula_scripts PUBLIC
     nebula_window
     nebula_ecs
     nebula_graphics
+)
+target_include_directories(nebula_scripts PUBLIC
+    src/modules/scripts/boot.lua
 )
 
 set(NEBULA_MODULES
@@ -138,8 +157,6 @@ include_directories(
     src/modules
 )
 
-# Uncomment to use static lib
-# option(BUILD_SHARED_LIBS OFF)
 add_subdirectory(libs/SDL3)
 add_subdirectory(libs/lua-5.4.8)
 

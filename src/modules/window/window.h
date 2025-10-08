@@ -9,7 +9,7 @@ namespace nebula {
 
 namespace window {
 
-class Window : Module {
+class Window : public Module {
 public:
     Window();
     ~Window();

@@ -41,6 +41,7 @@ inline bool isIdUnalived(EntityIdIndex *index, EntityId id) {
 struct ComponentIdIndex {
     ComponentId nextId = 1; //lazy way to check if a component exists, since no component will be registered with an id of 0
     std::unordered_map<std::string, ComponentId> typeIdIndex;
+    std::unordered_map<std::string, std::string> typeNameIndex;
     std::unordered_map<ComponentId, std::string> idNameIndex;
 };
 
@@ -62,10 +63,27 @@ inline ComponentId getNewId(ComponentIdIndex *index, const char* componentName) 
 };
 
 template <typename T>
+inline ComponentId getNewId(ComponentIdIndex *index, const char* componentName) {
+    ComponentId id = index->nextId ++;
+    std::string typeName = std::string(typeid(T).name());
+    std::string s = componentName;
+    index->typeIdIndex.insert({s, id});
+    index->typeNameIndex.insert({typeName, s});
+    index->idNameIndex.insert({id, s});
+    return id;
+};
+
+template <typename T>
 inline ComponentId getComponentId(ComponentIdIndex *index) {
     std::string name = std::string(typeid(T).name());
     if (index->typeIdIndex.count(name) == 0) {
-        return 0;
+        if (index->typeNameIndex.count(name) == 0){
+            return 0;
+        }
+        if (index->typeIdIndex.count(index->typeNameIndex.at(name)) == 0) {
+            return 0;
+        }
+        return index->typeIdIndex[index->typeNameIndex[name]];
     }
     return index->typeIdIndex[name];
 };

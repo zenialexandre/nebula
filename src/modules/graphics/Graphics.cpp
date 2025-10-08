@@ -3,6 +3,13 @@
 namespace nebula {
     namespace graphics {
 
+static const char vertexShaderCode[] =
+#include "../../../resources/shaders/vertexShader.glsl"
+;
+
+static const char fragShaderCode[] =
+#include "../../../resources/shaders/fragShader.glsl"
+;
 
 Graphics::Graphics(int width, int height)
             : Module(GRAPHICS, "graphics")
@@ -27,7 +34,7 @@ bool Graphics::initialize() {
     if (!gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress)) {
         return false;
     }
-    defaultShader = new Shader("resources/shaders/vertexShader.vert", "resources/shaders/fragShader.frag");
+    defaultShader = new Shader(vertexShaderCode, fragShaderCode);
     if (!defaultShader->getId()) {
         return false;
     }
@@ -35,8 +42,8 @@ bool Graphics::initialize() {
     renderer = new Renderer();
     renderer->init();
 
-    this->getGLVersionInfo();
-    this->getVertexShaderInfo();
+    //this->getGLVersionInfo();
+    //this->getVertexShaderInfo();
 
     return true;
 }
@@ -45,7 +52,7 @@ void Graphics::beginScene(ecs::World* world) {
     glViewport(0, 0, width, height);
 
     // (state-setting function)
-    glClearColor(0.07f, 0.0f, 0.125f, 1.0f);
+    glClearColor(bgColorR, bgColorG, bgColorB, bgColorA);
     // (state-using function) fills the color buffer with the color configured by glClearColor
     glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
@@ -63,6 +70,19 @@ Texture* Graphics::newSprite(std::string path) {
     Texture* tex = new Texture(path.c_str());
     textures.insert({path, tex});
     return tex;
+}
+
+void Graphics::setWindowSize(int width, int height) {
+    this->width = width;
+    this->height = height;
+    this->defaultCamera->setSize(width, height);
+}
+
+void Graphics::setBackground(float r, float g, float b, float a) {
+    this->bgColorR = r;
+    this->bgColorG = g;
+    this->bgColorB = b;
+    this->bgColorA = a;
 }
 
 void Graphics::getGLVersionInfo() {

@@ -2,6 +2,7 @@
 #include "WrapPosition.hpp"
 #include "WrapScale.hpp"
 #include "WrapQuad.hpp"
+#include "WrapSprite.hpp"
 
 #include <iostream>
 namespace nebula {
@@ -201,6 +202,12 @@ namespace nebula {
         }
         if (componentId == SCALE) {
             return scaleConstructor(L, argsCount == 1);
+        }
+        if (componentId == QUAD) {
+            return quadConstructor(L, argsCount == 1);
+        }
+        if (componentId == SPRITE) {
+            return spriteConstructor(L, argsCount == 1);
         }
 
         return 1;
@@ -585,6 +592,7 @@ namespace nebula {
         nlua_ecs_position,
         nlua_ecs_scale,
         nlua_ecs_quad,
+        nlua_ecs_sprite,
         0
     };
 

@@ -3,33 +3,15 @@
 namespace nebula {
     namespace graphics {
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* vertexCode, const char* fragmentCode)
         : id(NULL) {
-    std::string vertexCode {};
-    std::string fragmentCode {};
-
-    data::TextFile* vertexFile = new data::TextFile(vertexPath);
-    data::TextFile* fragFile = new data::TextFile(fragmentPath);
-
-    if(!vertexFile->read(vertexCode)) {
-        std::cout << "ERROR::SHADER::VERT::READ_FILE" << "\n";
-    }
-    if(!fragFile->read(fragmentCode)) {
-        std::cout << "ERROR::SHADER::FRAG::READ_FILE" << "\n";
-    }
-
-    delete vertexFile;
-    delete fragFile;
-
-    const char* vShaderCode = vertexCode.c_str();
-    const char* fShaderCode = fragmentCode.c_str();
 
     unsigned int vertex {}, fragment {};
     int success {};
     char infoLog[512] {};
 
     vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, &vShaderCode, NULL);
+    glShaderSource(vertex, 1, &vertexCode, NULL);
     glCompileShader(vertex);
     glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
     if (!success) {
@@ -38,7 +20,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     }
 
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, &fShaderCode, NULL);
+    glShaderSource(fragment, 1, &fragmentCode, NULL);
     glCompileShader(fragment);
     glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
     if (!success) {

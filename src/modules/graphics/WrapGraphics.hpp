@@ -1,12 +1,8 @@
 #pragma once
 
 #include "Graphics.h"
-
-extern "C" {
-	#include <lua.h>
-	#include <lualib.h>
-	#include <lauxlib.h>
-}
+#include "../common/WrapModule.hpp"
+#include "../common/LuaBidings.hpp"
 
 namespace nebula {
     namespace graphics {

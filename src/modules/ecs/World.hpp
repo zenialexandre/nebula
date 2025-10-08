@@ -161,6 +161,16 @@ public:
         return c_id;
     }
 
+    template <typename T>
+    ComponentId registerComponent(const char *name) {
+        ComponentId c_id = getComponentId(this->componentIdIndex, name);
+        if(!c_id) { // Component not yet registered
+            c_id = getNewId<T>(this->componentIdIndex, name); // So register it here
+            this->component_index.insert({c_id, new TableMap()}); // Saving it on component_index
+        }
+        return c_id;
+    }
+
     ComponentId componentExists(const char *name) {
         return getComponentId(this->componentIdIndex, name);
     }

@@ -1,14 +1,20 @@
 #include "NebulaSetup.hpp"
 
 extern "C" {
-    //extern int nlua_graphics(lua_State* L);
+    extern int nlua_graphics(lua_State* L);
     extern int nlua_ecs(lua_State *L);
     extern int nlua_time(lua_State *L);
     extern int nlua_nebula_boot(lua_State *L);
+    extern int nlua_window(lua_State *L);
 }
 
+static const char bootLua[] =
+#include "boot.lua"
+;
+
 static const luaL_Reg modules[] = {
-    //{"nebula.graphics", nlua_graphics},
+    {"nebula.window", nlua_window},
+    {"nebula.graphics", nlua_graphics},
     {"nebula.ecs", nlua_ecs},
     {"nebula.time", nlua_time},
     {"nebula.boot", nlua_nebula_boot},
@@ -47,9 +53,7 @@ int nlua_nebula(lua_State *L) {
 }
 
 int nlua_nebula_boot(lua_State *L) {
-    std::cout << "calling boot.lua" << std::endl;
-    if(luaL_loadfile(L, "src/modules/scripts/boot.lua") == LUA_OK) {
-        std::cout << "boot.lua found" << std::endl;
+    if(luaL_loadbuffer(L, bootLua, sizeof(bootLua), "boot nebula") == LUA_OK) {
         lua_call(L, 0, 1);
     }
     return 1;

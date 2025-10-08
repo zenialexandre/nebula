@@ -1,27 +1,88 @@
 #include "WrapGraphics.hpp"
+#include "WrapTexture.hpp"
 
 namespace nebula {
 
-#define graphics() (Module::getInstance<graphics::Graphics>(GRAPHICS))
+#define graphics() (ModuleRegistry::getInstance<graphics::Graphics>(GRAPHICS))
+#define ecs() (ModuleRegistry::getInstance<ecs::World>(ECS))
 
     namespace graphics {
 
 int w_draw(lua_State *L) {
-    ecs::EntityId id = (ecs::EntityId) lua_touserdata(L, 1);
+    ecs::EntityId id = (ecs::EntityId) luaL_checknumber(L, 1);
     graphics()->draw(id);
+    lua_pop(L, 1);
+    return 0;
+}
+
+int w_newSprite(lua_State *L) {
+    if (lua_gettop(L) != 1 || !luaL_checkstring(L, 1)) {
+        luaL_error(L, "This function should only receive the sprite path.");
+    }
+
+    const char* filePath = lua_tostring(L, 1);
+    Texture *texture = graphics()->newSprite(filePath);
+    if (texture == nullptr) {
+        luaL_error(L, "Something went wrong when creating a sprite");
+    }
+    lua_pushlightuserdata(L, texture);
+    luaL_getmetatable(L, "Texture");
+    lua_setmetatable(L, -2);
+    return 1;
+}
+
+int w_setBackground(lua_State *L) {
+    if (lua_gettop(L) == 3) {
+        float r = (float)luaL_checknumber(L, 1);
+        float g = (float)luaL_checknumber(L, 2);
+        float b = (float)luaL_checknumber(L, 3);
+
+        graphics()->setBackground(r, g, b);
+    }
+    if (lua_gettop(L) == 4) {
+        float r = (float)luaL_checknumber(L, 1);
+        float g = (float)luaL_checknumber(L, 2);
+        float b = (float)luaL_checknumber(L, 3);
+        float a = (float)luaL_checknumber(L, 4);
+
+        graphics()->setBackground(r, g, b, a);
+    }
+    return 0;
+}
+
+int w_beginScene(lua_State *L) {
+    graphics()->beginScene(ecs());
+    return 0;
+}
+
+int w_endScene(lua_State *L) {
+    graphics()->endScene();
     return 0;
 }
 
 static const luaL_Reg functions[] = {
-    {"draw", w_draw}
+    {"draw", w_draw},
+    {"newSprite", w_newSprite},
+    {"setBackground", w_setBackground},
+    {"_beginScene", w_beginScene},
+    {"_endScene", w_endScene},
+    {0, 0}
+};
+
+static const lua_CFunction types[] = {
+    nlua_graphics_texture,
+    0
 };
 
 extern "C" int nlua_graphics(lua_State *L) {
-    //Graphics *instance = Graphics::create;
-    //if (instance == nullptr) {
-    //    return luaL_error(L, "Error creating Graphics module.");
-    //}
+    Graphics *graphics = graphics();
 
+    WrapModule wModule;
+    wModule.module = graphics;
+    wModule.funcs = functions;
+    wModule.types = types;
+
+    return registerModule(L, wModule);
 }
 
 } // graphics    

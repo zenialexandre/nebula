@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include <cstdio>
+#include <iostream>
 
 namespace nebula {
     namespace graphics {
@@ -77,23 +78,6 @@ bool Renderer::setupBuffers() {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
     glActiveTexture(GL_TEXTURE0);
-
-    //std::vector<uint32_t> indices;
-    //indices.reserve(MAX_INDICES);
-
-    //uint32_t offset = 0;
-    //for (uint32_t i = 0; i < MAX_QUADS; i++) {
-    //    indices.push_back(offset + 0);
-    //    indices.push_back(offset + 1);
-    //    indices.push_back(offset + 2);
-    //    indices.push_back(offset + 2);
-    //    indices.push_back(offset + 3);
-    //    indices.push_back(offset + 0);
-    //    offset += 4;
-    //}
-
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-    //glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(uint32_t), indices.data(), GL_STATIC_DRAW);
 
     glBindVertexArray(0);
     return true;

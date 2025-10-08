@@ -27,6 +27,8 @@ public:
     void draw(ecs::EntityId entity);
 
     Texture* newSprite(std::string path);
+    void setWindowSize(int width, int height);
+    void setBackground(float r, float g, float b, float a  = 1.0f);
 
 private:
     Shader* defaultShader;
@@ -34,6 +36,7 @@ private:
     Renderer* renderer;
 
     int width, height;
+    float bgColorR = 0.0f, bgColorG = 0.0f, bgColorB = 0.0f, bgColorA = 1.0f;
     
     void getGLVersionInfo();
     void getVertexShaderInfo();

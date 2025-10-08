@@ -68,6 +68,20 @@ static int ensureModuleRegistry(lua_State *L) {
     return 1;
 }
 
+template <typename T>
+static bool checkUserData(lua_State *L, const int udataIdx) {
+    if (lua_type(L, udataIdx) != LUA_TUSERDATA && lua_type(L, udataIdx) != LUA_TLIGHTUSERDATA) {
+        return false;
+    }
+
+    T *pointer = (T*)lua_touserdata(L, udataIdx);
+
+    if (pointer == nullptr) {
+        return false;
+    }
+    return true;
+}
+
 static int getNumOfTableFields(lua_State *L, const int tableIdx) {
     int count = 0;
 
