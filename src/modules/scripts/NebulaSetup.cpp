@@ -5,6 +5,7 @@ extern "C" {
     extern int nlua_ecs(lua_State *L);
     extern int nlua_time(lua_State *L);
     extern int nlua_nebula_boot(lua_State *L);
+    extern int nlua_nebula_baseScreen(lua_State *L);
     extern int nlua_window(lua_State *L);
 }
 
@@ -12,12 +13,18 @@ static const char bootLua[] =
 #include "boot.lua"
 ;
 
+static const char baseScreenLua[] =
+#include "baseScreen.lua"
+;
+
+
 static const luaL_Reg modules[] = {
     {"nebula.window", nlua_window},
     {"nebula.graphics", nlua_graphics},
     {"nebula.ecs", nlua_ecs},
     {"nebula.time", nlua_time},
     {"nebula.boot", nlua_nebula_boot},
+    {"nebula.baseScreen", nlua_nebula_baseScreen},
     {0, 0}
 };
 
@@ -54,6 +61,13 @@ int nlua_nebula(lua_State *L) {
 
 int nlua_nebula_boot(lua_State *L) {
     if(luaL_loadbuffer(L, bootLua, sizeof(bootLua), "boot nebula") == LUA_OK) {
+        lua_call(L, 0, 1);
+    }
+    return 1;
+}
+
+int nlua_nebula_baseScreen(lua_State *L) {
+    if(luaL_loadbuffer(L, baseScreenLua, sizeof(baseScreenLua), "base screen nebula") == LUA_OK) {
         lua_call(L, 0, 1);
     }
     return 1;

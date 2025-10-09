@@ -15,12 +15,13 @@ public:
                     return true;
                 } else {
                     std::filesystem::path p(path);
+                    return true;
                 }
             }
         } catch (const std::exception& e) {
             return false;
         }
-        return true;
+        return false;
     }
 
     static inline std::string getRelativePath(const std::string &srcPath, const std::string &targetPath) {

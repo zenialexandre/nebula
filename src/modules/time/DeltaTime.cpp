@@ -17,7 +17,7 @@ namespace nebula {
         frames++;
         
         prevTime = currTime;
-        currTime = Instant::now(SECONDS);
+        currTime = Instant::now(MILLISECONDS)/1000;
 
         delta = currTime - prevTime;
 

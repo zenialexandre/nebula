@@ -11,7 +11,6 @@ namespace nebula {
 int w_draw(lua_State *L) {
     ecs::EntityId id = (ecs::EntityId) luaL_checknumber(L, 1);
     graphics()->draw(id);
-    lua_pop(L, 1);
     return 0;
 }
 

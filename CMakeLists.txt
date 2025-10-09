@@ -131,6 +131,7 @@ target_link_libraries(nebula_scripts PUBLIC
 )
 target_include_directories(nebula_scripts PUBLIC
     src/modules/scripts/boot.lua
+    src/modules/scripts/baseScreen.lua
 )
 
 set(NEBULA_MODULES

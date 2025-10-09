@@ -86,9 +86,6 @@ static RunAction runNebula(int argc, char **argv, int &mainReturn) {
         if (nebula::data::File::isValidPath(fullPath)) {
             lua_pushstring(L, gamePath.c_str());
             lua_setfield(L, -2, "_gamePath");
-        } else {
-            lua_pushboolean(L, 1);
-            lua_setfield(L, -2, "_baseScreen");
         }
 
         lua_setglobal(L, "_nebulaArgs");
@@ -104,6 +101,20 @@ static RunAction runNebula(int argc, char **argv, int &mainReturn) {
 	lua_pushstring(L, "nebula.boot");
 	lua_call(L, 1, 1);
 
+    lua_newthread(L);
+    lua_pushvalue(L, -2);
+
+    const int count = lua_gettop(L);
+    int nresults;
+
+    while(lua_resume(L, nullptr, 0, &nresults) == LUA_YIELD) {
+        lua_pop(L, nresults);
+    }
+
+    if (lua_isnumber(L, count)) {
+        mainReturn = lua_tonumber(L, count);
+    }
+
     lua_close(L);
 
     return QUIT;
@@ -115,12 +126,6 @@ int main(int argc, char **argv) {
     nebula::setup();
 
     RunAction action = RUN;
-
-    std::cout << "argc: " << argc << std::endl;
-
-    for (int i = 0; i < argc; ++i) {
-        std::cout << "Argument " << i << ": " << argv[i] << std::endl;
-    }
 
     do {
         action = runNebula(argc, argv, mainReturn);

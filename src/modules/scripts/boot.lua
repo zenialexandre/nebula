@@ -2,75 +2,69 @@ R"(
 
 local nebula = require("nebula")
 
-function sleep(sec)
-    local s = tonumber(os.clock() + sec)
-    while (os.clock() < sec)do
+print('call boot.lua')
+
+function printError(msg, layer)
+    print((debug.traceback("[LUA] Error: " .. tostring(msg), 1+(layer or 1))))
+end
+
+function nebula.boot()
+    if (_nebulaArgs ~= nil) then
+        if (_nebulaArgs["_gamePath"] ~= nil) then
+            require(_nebulaArgs._gamePath:gsub("%.lua$", ""))
+        else
+            require("nebula.baseScreen")
+        end
+    end
+
+    require("nebula.time")
+    require("nebula.ecs")
+    require("nebula.graphics")
+    require("nebula.window")
+end
+
+function nebula.run()
+    if nebula.setup then nebula.setup() end
+
+    nebula.time.tick()
+
+    return function()
+        local dt = nebula.time.tick()
+
+        if nebula.update then nebula.update(dt) end
+
+        if nebula.draw then
+            nebula.graphics._beginScene()
+            nebula.draw()
+            nebula.graphics._endScene()
+            nebula.window.swapBuffers()
+        end
     end
 end
 
-function debugPos(pos, name, e_x, e_y)
-    print(name)
-    print("RESULT: ", pos.x == e_x," | x: ", pos.x, " - expected: ", e_x)
-    print("RESULT: ", pos.y == e_y," | y: ", pos.y, " - expected: ", e_y)
-    print("-----------------------------\n")
-end
-
-function printTable(tab)
-    for key, value in pairs(tab) do
-        print("key: ", key)
-        print("value: ", value)
-    end
-end
-
-print('A')
-print(_nebulaArgs._exePath)
-print('b')
-if (_nebulaArgs ~= 'nil') then
-    if (_nebulaArgs["_gamePath"] ~= nil) then
-        require(_nebulaArgs._gamePath:gsub("%.lua$", ""))
-    end
-end
-
-require("nebula.time")
-require("nebula.ecs")
-require("nebula.graphics")
-require("nebula.window")
-
-local Sprite = nebula.ecs.component("Sprite")
-local Position = nebula.ecs.component("Position")
-local Quad = nebula.ecs.component("Quad")
-
-local containerSprite = nebula.graphics.newSprite("resources/textures/container.jpg")
-
-local entity = nebula.ecs.spawn()
-
-nebula.ecs.addComponent(entity, Position({x = 10; y = 10}), Sprite({texture = containerSprite}))
---nebula.ecs.addComponent(entity, Position({x = 200; y = 100}), Quad({width = 500; height = 500}))
-
-nebula.graphics.setBackground(0.07, 0.0, 0.125)
-
-nebula.graphics._beginScene()
-nebula.graphics.draw(entity)
-nebula.graphics._endScene()
-nebula.window.swapBuffers()
-
-nebula.graphics._beginScene()
-nebula.graphics.draw(entity)
-nebula.graphics._endScene()
-nebula.window.swapBuffers()
-
-nebula.graphics._beginScene()
-nebula.graphics.draw(entity)
-nebula.graphics._endScene()
-nebula.window.swapBuffers()
-
---print(nebula.time.tick())
-sleep(3)
---print(nebula.time.getDeltaTime())
---print(nebula.time.tick())
---print(nebula.time.getFPS())
 return function()
-    print("[LUA] Teste")
+    local run = false
+
+    print('call boot')
+    local ok = xpcall(nebula.boot, printError)
+    if not ok then return 1 end
+
+    print('call run')
+    ok, nRun = xpcall(nebula.run, printError)
+    if ok then
+        run = true
+    end
+
+    print('call run loop')
+    while run do
+        local ok = xpcall(nRun, printError)
+        if not ok then
+            return 0
+        end
+        coroutine.yield()
+    end
+
+    return 1
 end
 
 --)"
