@@ -112,6 +112,7 @@ add_library(nebula_data STATIC
     src/modules/data/ImageFile.h
     src/modules/data/TextFile.cpp
     src/modules/data/TextFile.h
+    src/modules/data/File.hpp
 )
 target_link_libraries(nebula_data PUBLIC
     nebula_common

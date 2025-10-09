@@ -22,6 +22,15 @@ function printTable(tab)
     end
 end
 
+print('A')
+print(_nebulaArgs._exePath)
+print('b')
+if (_nebulaArgs ~= 'nil') then
+    if (_nebulaArgs["_gamePath"] ~= nil) then
+        require(_nebulaArgs._gamePath:gsub("%.lua$", ""))
+    end
+end
+
 require("nebula.time")
 require("nebula.ecs")
 require("nebula.graphics")
