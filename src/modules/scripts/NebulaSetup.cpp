@@ -7,6 +7,7 @@ extern "C" {
     extern int nlua_nebula_boot(lua_State *L);
     extern int nlua_nebula_baseScreen(lua_State *L);
     extern int nlua_window(lua_State *L);
+    extern int nlua_event(lua_State *L);
 }
 
 static const char bootLua[] =
@@ -19,10 +20,13 @@ static const char baseScreenLua[] =
 
 
 static const luaL_Reg modules[] = {
+    // modules
     {"nebula.window", nlua_window},
     {"nebula.graphics", nlua_graphics},
     {"nebula.ecs", nlua_ecs},
     {"nebula.time", nlua_time},
+    {"nebula.event", nlua_event},
+    // lua files
     {"nebula.boot", nlua_nebula_boot},
     {"nebula.baseScreen", nlua_nebula_baseScreen},
     {0, 0}

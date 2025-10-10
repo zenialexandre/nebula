@@ -10,6 +10,7 @@ enum ModuleDef {
     GRAPHICS,
     WINDOW,
     TIME,
+    EVENT,
     MODULES_SIZE
 };
 

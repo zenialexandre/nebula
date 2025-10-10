@@ -2,8 +2,6 @@ R"(
 
 local nebula = require("nebula")
 
-print('call boot.lua')
-
 function printError(msg, layer)
     print((debug.traceback("[LUA] Error: " .. tostring(msg), 1+(layer or 1))))
 end
@@ -21,6 +19,7 @@ function nebula.boot()
     require("nebula.ecs")
     require("nebula.graphics")
     require("nebula.window")
+    require("nebula.event")
 end
 
 function nebula.run()
@@ -29,6 +28,16 @@ function nebula.run()
     nebula.time.tick()
 
     return function()
+
+        eventName = nebula.event.poll()
+        while eventName ~= nil do
+            print(eventName)
+            if eventName == "quit" then
+                return 0
+            end
+            eventName = nebula.event.poll()
+        end
+
         local dt = nebula.time.tick()
 
         if nebula.update then nebula.update(dt) end
@@ -45,19 +54,19 @@ end
 return function()
     local run = false
 
-    print('call boot')
     local ok = xpcall(nebula.boot, printError)
     if not ok then return 1 end
 
-    print('call run')
     ok, nRun = xpcall(nebula.run, printError)
     if ok then
         run = true
     end
 
-    print('call run loop')
     while run do
-        local ok = xpcall(nRun, printError)
+        local ok, quit = xpcall(nRun, printError)
+        if quit then
+            return 0
+        end
         if not ok then
             return 0
         end

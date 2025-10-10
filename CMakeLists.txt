@@ -118,6 +118,19 @@ target_link_libraries(nebula_data PUBLIC
     nebula_common
 )
 
+add_library(nebula_event STATIC
+    src/modules/event/Event.hpp
+    src/modules/event/Event.cpp
+    src/modules/event/WrapEvent.hpp
+    src/modules/event/WrapEvent.cpp
+)
+target_link_libraries(nebula_event PUBLIC
+    SDL3::SDL3
+    nebula_common
+    nebula_window
+    nebula_graphics
+)
+
 add_library(nebula_scripts STATIC
     src/modules/scripts/NebulaSetup.cpp
     src/modules/scripts/NebulaSetup.hpp
@@ -128,6 +141,7 @@ target_link_libraries(nebula_scripts PUBLIC
     nebula_window
     nebula_ecs
     nebula_graphics
+    nebula_event
 )
 target_include_directories(nebula_scripts PUBLIC
     src/modules/scripts/boot.lua
@@ -141,6 +155,7 @@ set(NEBULA_MODULES
     nebula_data
     nebula_ecs
     nebula_common
+    nebula_event
     nebula_scripts
 )
 
