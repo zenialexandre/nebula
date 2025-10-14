@@ -38,7 +38,7 @@ bool Renderer::setupBuffers() {
     glBindVertexArray(vao);
 
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(Vertex), nullptr, GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(Vertex), nullptr, GL_STREAM_DRAW);
 
     std::vector<uint32_t> indices;
     indices.reserve(MAX_INDICES);
@@ -101,9 +101,8 @@ void Renderer::flush() {
         return;
     }
 
-    // upload data
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, vertexCount * sizeof(Vertex), vertices);
+    glBufferData(GL_ARRAY_BUFFER, MAX_VERTICES * sizeof(Vertex), vertices, GL_STREAM_DRAW);
 
     shader->use();
 

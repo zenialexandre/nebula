@@ -73,7 +73,9 @@ void Camera::recalculateView() {
 }
 
 void Camera::recalculateProjection() {
-    this->projectionMatrix = glm::ortho(0.0f, width, height, 0.0f, nearClip, farClip);
+    float visibleWidth = width / zoom;
+    float visibleHeight = height / zoom;
+    this->projectionMatrix = glm::ortho(0.0f, visibleWidth, visibleHeight, 0.0f, nearClip, farClip);
 }
 
 } // graphics

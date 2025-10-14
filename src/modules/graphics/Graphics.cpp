@@ -38,6 +38,11 @@ bool Graphics::initialize() {
     if (!defaultShader->getId()) {
         return false;
     }
+
+    glEnable(GL_TEXTURE_2D);
+
+    //glEnable(GL_MULTISAMPLE);
+
     defaultCamera = new Camera(width, height);
     renderer = new Renderer();
     renderer->init();

@@ -5,6 +5,8 @@
 #include <Time/WrapTime.hpp>
 #include <Ecs/WrapWorld.hpp>
 #include <Event/WrapEvent.hpp>
+#include <Keyboard/WrapKeyboard.hpp>
+#include <Mouse/WrapMouse.hpp>
 
 extern "C" {
     #include <lua.h>
@@ -29,8 +31,9 @@ namespace nebula {
         graphics::Graphics *graphics = new graphics::Graphics(window->getWidth(), window->getHeight());
 
         time::Time *time = new time::Time();
-
         event::Event *event = new event::Event();
+        keyboard::Keyboard *keyboard = new keyboard::Keyboard();
+        mouse::Mouse *mouse = new mouse::Mouse();
 
         if(!graphics->initialize()) {
             SDL_Log("%s", "ERROR INITIALIZING GRAPHICS");

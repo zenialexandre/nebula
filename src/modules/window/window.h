@@ -18,6 +18,7 @@ public:
     int getWidth();
     int getHeight();
     void swapBuffers();
+    SDL_Window *getSDLWindow() const;
 
 private:
     bool createWindow(int width, int height);

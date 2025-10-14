@@ -94,5 +94,9 @@ void Window::swapBuffers() {
     SDL_GL_SwapWindow(window);
 }
 
+SDL_Window *Window::getSDLWindow() const {
+    return this->window;
 }
-}
+
+} // window
+} // nebula

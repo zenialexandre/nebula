@@ -20,6 +20,8 @@ function nebula.boot()
     require("nebula.graphics")
     require("nebula.window")
     require("nebula.event")
+    require("nebula.keyboard")
+    require("nebula.mouse")
 end
 
 function nebula.run()
@@ -31,7 +33,6 @@ function nebula.run()
 
         eventName = nebula.event.poll()
         while eventName ~= nil do
-            print(eventName)
             if eventName == "quit" then
                 return 0
             end

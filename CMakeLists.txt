@@ -118,6 +118,29 @@ target_link_libraries(nebula_data PUBLIC
     nebula_common
 )
 
+add_library(nebula_keyboard STATIC
+    src/modules/keyboard/Keyboard.cpp
+    src/modules/keyboard/Keyboard.hpp
+    src/modules/keyboard/WrapKeyboard.cpp
+    src/modules/keyboard/WrapKeyboard.hpp
+)
+target_link_libraries(nebula_keyboard PUBLIC
+    SDL3::SDL3
+    nebula_common
+)
+
+add_library(nebula_mouse STATIC
+    src/modules/mouse/Mouse.cpp
+    src/modules/mouse/Mouse.hpp
+    src/modules/mouse/WrapMouse.cpp
+    src/modules/mouse/WrapMouse.hpp
+)
+target_link_libraries(nebula_mouse PUBLIC
+    SDL3::SDL3
+    nebula_common
+    nebula_window
+)
+
 add_library(nebula_event STATIC
     src/modules/event/Event.hpp
     src/modules/event/Event.cpp
@@ -142,6 +165,8 @@ target_link_libraries(nebula_scripts PUBLIC
     nebula_ecs
     nebula_graphics
     nebula_event
+    nebula_keyboard
+    nebula_mouse
 )
 target_include_directories(nebula_scripts PUBLIC
     src/modules/scripts/boot.lua
@@ -157,6 +182,7 @@ set(NEBULA_MODULES
     nebula_common
     nebula_event
     nebula_scripts
+    nebula_keyboard
 )
 
 set(NEBULA_LIBRARIES

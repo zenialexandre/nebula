@@ -11,6 +11,9 @@ enum ModuleDef {
     WINDOW,
     TIME,
     EVENT,
+    KEYBOARD,
+    MOUSE,
+    AUDIO,
     MODULES_SIZE
 };
 

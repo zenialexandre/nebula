@@ -35,7 +35,7 @@ private:
     float width, height;
 
     // TODO: create a zoom in/out impl. check this: https://stackoverflow.com/questions/73422091/what-is-the-proper-way-to-zoom-in-and-out-using-orthographic-projection
-    //float zoom = 1.0f;
+    float zoom = 1.0f;
 
     glm::mat4 projectionMatrix;
     glm::mat4 viewMatrix;
