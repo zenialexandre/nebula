@@ -3,6 +3,8 @@
 #include "WrapScale.hpp"
 #include "WrapQuad.hpp"
 #include "WrapSprite.hpp"
+#include "WrapText.hpp"
+#include "WrapColor.hpp"
 
 #include <iostream>
 namespace nebula {
@@ -27,7 +29,9 @@ namespace nebula {
         POSITION = 1,
         SCALE = 2,
         QUAD = 3,
-        SPRITE = 4
+        SPRITE = 4,
+        TEXT = 5,
+        COLOR = 6
     };
 
     struct LuaTableRef {
@@ -74,6 +78,12 @@ namespace nebula {
             return true;
         }
         if (name == "Sprite") {
+            return true;
+        }
+        if (name == "Text") {
+            return true;
+        }
+        if (name == "Color") {
             return true;
         }
         return false;
@@ -209,6 +219,12 @@ namespace nebula {
         if (componentId == SPRITE) {
             return spriteConstructor(L, argsCount == 1);
         }
+        if (componentId == TEXT) {
+            return textConstructor(L, argsCount == 1);
+        }
+        if (componentId == COLOR) {
+            return colorConstructor(L, argsCount == 1);
+        }
 
         return 1;
     }
@@ -297,6 +313,12 @@ namespace nebula {
         if (safeComponentId == SPRITE) {
             return addNebulaComponent<Sprite>(L, entId, cTabIdx, safeComponentId, metadataName);
         }
+        if (safeComponentId == TEXT) {
+            return addNebulaComponent<Text>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
+        if (safeComponentId == COLOR) {
+            return addNebulaComponent<Color>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
 
         lua_pushvalue(L, cTabIdx); // pushes the table to create a ref
         ecs()->addComponentSafe(entId, safeComponentId, LuaTableRef{luaL_ref(L, LUA_REGISTRYINDEX)});
@@ -344,6 +366,12 @@ namespace nebula {
         }
         if (safeComponentId == SPRITE) {
             return getNebulaComponent<Sprite>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == TEXT) {
+            return getNebulaComponent<Text>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == COLOR) {
+            return getNebulaComponent<Color>(L, entId, safeComponentId, metadataName);
         }
 
         LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, safeComponentId);
@@ -593,6 +621,8 @@ namespace nebula {
         nlua_ecs_scale,
         nlua_ecs_quad,
         nlua_ecs_sprite,
+        nlua_ecs_text,
+        nlua_ecs_color,
         0
     };
 

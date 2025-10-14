@@ -41,6 +41,9 @@ bool Graphics::initialize() {
 
     glEnable(GL_TEXTURE_2D);
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);  
+
     //glEnable(GL_MULTISAMPLE);
 
     defaultCamera = new Camera(width, height);
@@ -68,13 +71,19 @@ void Graphics::endScene() {
     renderer->end();
 }
 
-Texture* Graphics::newSprite(std::string path) {
+Texture *Graphics::newTexture(std::string path) {
     if (textures.count(path) != 0) {
         return textures.at(path);
     }
-    Texture* tex = new Texture(path.c_str());
+    Texture *tex = new Texture(path.c_str());
     textures.insert({path, tex});
     return tex;
+}
+
+Font *Graphics::newFont(std::string path, uint32_t size) {
+    Font *font = new Font();
+    font->load(path, size);
+    return font;
 }
 
 void Graphics::setWindowSize(int width, int height) {

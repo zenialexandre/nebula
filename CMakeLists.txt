@@ -61,6 +61,10 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/WrapQuad.cpp
     src/modules/ecs/WrapSprite.hpp
     src/modules/ecs/WrapSprite.cpp
+    src/modules/ecs/WrapText.hpp
+    src/modules/ecs/WrapText.cpp
+    src/modules/ecs/WrapColor.hpp
+    src/modules/ecs/WrapColor.cpp
     src/modules/ecs/RenderComponents.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC
@@ -78,6 +82,8 @@ add_library(nebula_graphics STATIC
     src/modules/graphics/Texture.h
     src/modules/graphics/Shader.cpp
     src/modules/graphics/Shader.h
+    src/modules/graphics/Font.cpp
+    src/modules/graphics/Font.hpp
     src/modules/graphics/WrapGraphics.cpp
     src/modules/graphics/WrapGraphics.hpp
     src/modules/graphics/WrapTexture.cpp
@@ -86,6 +92,7 @@ add_library(nebula_graphics STATIC
 target_link_libraries(nebula_graphics PUBLIC 
     SDL3::SDL3
     lua-5.4.8
+    freetype
     glad
     nebula_ecs
     nebula_common
@@ -187,6 +194,7 @@ set(NEBULA_MODULES
 
 set(NEBULA_LIBRARIES
     SDL3::SDL3
+    freetype
     lua-5.4.8
     glad
     glm
@@ -202,6 +210,7 @@ include_directories(
 
 add_subdirectory(libs/SDL3)
 add_subdirectory(libs/lua-5.4.8)
+add_subdirectory(libs/freetype-2.14.1)
 
 add_executable(nebula)
 target_sources(nebula PRIVATE src/nebula.cpp)

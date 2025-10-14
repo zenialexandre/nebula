@@ -24,57 +24,61 @@ uniform sampler2D uTexture14;
 uniform sampler2D uTexture15;
 
 void main() {
+   vec4 texColor = vec4(1.0);
    int index = int(vTexIndex);
-   if (index == -1) {
-      FragColor = vColor;
-   }
    if (index == 0) {
-      FragColor = texture(uTexture0, vTexCoord);
+      texColor = texture(uTexture0, vTexCoord);
    }
    if (index == 1) {
-      FragColor = texture(uTexture1, vTexCoord);
+      texColor = texture(uTexture1, vTexCoord);
    }
    if (index == 2) {
-      FragColor = texture(uTexture2, vTexCoord);
+      texColor = texture(uTexture2, vTexCoord);
    }
    if (index == 3) {
-      FragColor = texture(uTexture3, vTexCoord);
+      texColor = texture(uTexture3, vTexCoord);
    }
    if (index == 4) {
-      FragColor = texture(uTexture4, vTexCoord);
+      texColor = texture(uTexture4, vTexCoord);
    }
    if (index == 5) {
-      FragColor = texture(uTexture5, vTexCoord);
+      texColor = texture(uTexture5, vTexCoord);
    }
    if (index == 6) {
-      FragColor = texture(uTexture6, vTexCoord);
+      texColor = texture(uTexture6, vTexCoord);
    }
    if (index == 7) {
-      FragColor = texture(uTexture7, vTexCoord);
+      texColor = texture(uTexture7, vTexCoord);
    }
    if (index == 8) {
-      FragColor = texture(uTexture8, vTexCoord);
+      texColor = texture(uTexture8, vTexCoord);
    }
    if (index == 9) {
-      FragColor = texture(uTexture9, vTexCoord);
+      texColor = texture(uTexture9, vTexCoord);
    }
    if (index == 10) {
-      FragColor = texture(uTexture10, vTexCoord);
+      texColor = texture(uTexture10, vTexCoord);
    }
    if (index == 11) {
-      FragColor = texture(uTexture11, vTexCoord);
+      texColor = texture(uTexture11, vTexCoord);
    }
    if (index == 12) {
-      FragColor = texture(uTexture12, vTexCoord);
+      texColor = texture(uTexture12, vTexCoord);
    }
    if (index == 13) {
-      FragColor = texture(uTexture13, vTexCoord);
+      texColor = texture(uTexture13, vTexCoord);
    }
    if (index == 14) {
-      FragColor = texture(uTexture14, vTexCoord);
+      texColor = texture(uTexture14, vTexCoord);
    }
    if (index == 15) {
-      FragColor = texture(uTexture15, vTexCoord);
+      texColor = texture(uTexture15, vTexCoord);
+   }
+   if (vColor.w == 1.0) { // text
+      vec4 sampled = vec4(1.0, 1.0, 1.0, texColor.r);
+      FragColor = vec4(vColor.xyz, 1.0) * sampled;
+   } else {
+      FragColor = vec4(vColor.xyz, 1.0) * texColor;
    }
 }
 )"

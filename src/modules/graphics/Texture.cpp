@@ -3,6 +3,8 @@
 namespace nebula {
     namespace graphics {
 
+Texture::Texture() : id(NULL) { }
+
 Texture::Texture(const char* texturePath) : id(NULL) {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);

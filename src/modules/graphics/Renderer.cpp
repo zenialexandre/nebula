@@ -133,7 +133,7 @@ void Renderer::flush() {
     textures.clear();
 }
 
-void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4 color, Texture* texture) {
+void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, Texture *texture) {
     if (indexCount >= MAX_INDICES) {
         flush();
     }
@@ -186,13 +186,47 @@ void Renderer::drawQuad(const glm::vec2& position, const glm::vec2& size, const 
     indexCount += 6;
 }
 
+void Renderer::drawText(const std::string& text, Font* font, const glm::vec2& position, const glm::vec4& color, const glm::vec2& scale) {
+    if (!font) return;
+
+    float x = position.x;
+    float y = position.y;
+
+    for (const char& c : text) {
+        const Character& ch = font->getCharacter(c);
+        
+        if (c == '\n') {
+            x = position.x;
+            y -= font->getLineHeight() * scale.y;
+            continue;
+        }
+
+        float xpos = x + ch.bearing.x * scale.x;
+        float ypos = y - (ch.size.y - ch.bearing.y) * scale.y;
+
+        float w = ch.size.x * scale.x;
+        float h = ch.size.y * scale.y;
+
+        // render glyph
+        drawQuad(
+            glm::vec2(xpos, ypos),
+            glm::vec2(w, h),
+            color,
+            ch.texture
+        );
+
+        x += (ch.advance >> 6) * scale.x;
+    }
+}
+
 void Renderer::drawEntity(ecs::EntityId entity) {
     if (!world->hasComponent<Position>(entity)) {
         return;
     }
 
-    Position* pos = world->getComponent<Position>(entity);
-    Scale* scale = world->getComponent<Scale>(entity);
+    Position *pos = world->getComponent<Position>(entity);
+    Scale *scale = world->getComponent<Scale>(entity);
+    Color *color = world->getComponent<Color>(entity);
 
     float scaleX = 1.0f, scaleY = 1.0f;
 
@@ -201,28 +235,46 @@ void Renderer::drawEntity(ecs::EntityId entity) {
         scaleY = scale->y;
     }
 
+    float r = 1.0f, g = 1.0f, b = 1.0f;
+
+    if (color) {
+        r = color->r;
+        g = color->g;
+        b = color->b;
+    }
+
     if (world->hasComponent<Sprite>(entity)) {
-        Sprite* sprite = world->getComponent<Sprite>(entity);
+        Sprite *sprite = world->getComponent<Sprite>(entity);
         drawQuad(
             glm::vec2(pos->x, pos->y),
             glm::vec2(
                 sprite->texture->width * scaleX,
                 sprite->texture->height * scaleY
             ),
-            glm::vec4(1.0f),
+            glm::vec4(r, g, b, 0.0f),
             sprite->texture
         );
     }
     if (world->hasComponent<Quad>(entity)) {
-        Quad* quad = world->getComponent<Quad>(entity);
+        Quad *quad = world->getComponent<Quad>(entity);
         drawQuad(
             glm::vec2(pos->x, pos->y),
             glm::vec2(
                 quad->width * scaleX,
                 quad->height * scaleY
             ),
-            glm::vec4(1.0f),
+            glm::vec4(r, g, b, 0.0f),
             nullptr
+        );
+    }
+    if (world->hasComponent<Text>(entity)) {
+        Text *text = world->getComponent<Text>(entity);
+        drawText(
+            text->value,
+            text->font,
+            glm::vec2(pos->x, pos->y),
+            glm::vec4(r, g, b, 1.0f),
+            glm::vec2(scaleX, scaleY)
         );
     }
 }

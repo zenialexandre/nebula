@@ -11,6 +11,7 @@ namespace nebula {
 
 class Texture {
 public:
+    Texture();
     Texture(const char* texturePath);
     ~Texture();
 
@@ -20,7 +21,6 @@ public:
 
     int getId();
 
-private:
     unsigned int id;
 };
 

@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "Font.hpp"
 
 #include <iostream>
 #include <string>
@@ -26,7 +27,8 @@ public:
     void endScene();
     void draw(ecs::EntityId entity);
 
-    Texture* newSprite(std::string path);
+    Texture *newTexture(std::string path);
+    Font *newFont(std::string path, uint32_t size = 12);
     void setWindowSize(int width, int height);
     void setBackground(float r, float g, float b, float a  = 1.0f);
 

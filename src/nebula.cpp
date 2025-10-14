@@ -120,7 +120,7 @@ int main(int argc, char **argv) {
     return mainReturn;
 }
 
-//int main2() {
+//int main() {
 //    bool run = true;
 //
 //    nebula::setup();
@@ -133,14 +133,16 @@ int main(int argc, char **argv) {
 //    auto ent1 = ecs->spawn();
 //    auto ent2 = ecs->spawn();
 //
-//    auto ninaSprite = graphics->newSprite("resources/textures/Nina.png");
+//    auto ninaSprite = graphics->newTexture("resources/textures/Nina.png");
+//    auto aFont = graphics->newFont("resources/fonts/MaruMonica.ttf", 200);
 //
 //    ecs->addComponent(ent1, Sprite{ninaSprite});
 //    ecs->addComponent(ent1, Position{10.0f, 10.0f});
 //    ecs->addComponent(ent1, Scale{0.5f, 0.5f});
 //
-//    ecs->addComponent(ent2, Quad{100.0f, 100.0f});
+//    ecs->addComponent(ent2, Text{aFont, "TESTE"});
 //    ecs->addComponent(ent2, Position{500.0f, 200.0f});
+//    ecs->addComponent(ent2, Color{0.0f, 1.0f, 0.0f, 1.0f});
 //
 //    graphics->setBackground(1.0f, 0.0f, 0.0f);
 //

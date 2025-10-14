@@ -7,7 +7,7 @@ namespace nebula {
         : fps(0)
         , frames(0)
         , delta(0) {
-        currTime = Instant::now();
+        currTime = Instant::now(MILLISECONDS)/1000;
         prevFpsTime = currTime;
     }
 

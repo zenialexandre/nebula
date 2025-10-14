@@ -14,18 +14,43 @@ int w_draw(lua_State *L) {
     return 0;
 }
 
-int w_newSprite(lua_State *L) {
+int w_newTexture(lua_State *L) {
     if (lua_gettop(L) != 1 || !luaL_checkstring(L, 1)) {
         luaL_error(L, "This function should only receive the sprite path.");
     }
 
     const char* filePath = lua_tostring(L, 1);
-    Texture *texture = graphics()->newSprite(filePath);
+    Texture *texture = graphics()->newTexture(filePath);
     if (texture == nullptr) {
         luaL_error(L, "Something went wrong when creating a sprite");
     }
     lua_pushlightuserdata(L, texture);
     luaL_getmetatable(L, "Texture");
+    lua_setmetatable(L, -2);
+    return 1;
+}
+
+int w_newFont(lua_State *L) {
+    const int count = lua_gettop(L);
+    if (count > 2 || count == 0 || !luaL_checkstring(L, 1)) {
+        luaL_error(L, "This function should only receive the Font path and size (optional).");
+    }
+
+    const char* filePath = lua_tostring(L, 1);
+    Font *font = nullptr;
+    if (count == 1) {
+        font = graphics()->newFont(filePath);
+    }
+    if (count == 2) {
+        const int fontSize = luaL_checkinteger(L, 2);
+        font = graphics()->newFont(filePath, fontSize);
+    }
+
+    if (font == nullptr) {
+        luaL_error(L, "Something went wrong when creating a font");
+    }
+    lua_pushlightuserdata(L, font);
+    luaL_getmetatable(L, "Font");
     lua_setmetatable(L, -2);
     return 1;
 }
@@ -61,7 +86,8 @@ int w_endScene(lua_State *L) {
 
 static const luaL_Reg functions[] = {
     {"draw", w_draw},
-    {"newSprite", w_newSprite},
+    {"newTexture", w_newTexture},
+    {"newFont", w_newFont},
     {"setBackground", w_setBackground},
     {"_beginScene", w_beginScene},
     {"_endScene", w_endScene},

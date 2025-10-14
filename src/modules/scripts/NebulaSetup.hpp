@@ -24,6 +24,8 @@ namespace nebula {
         world->registerComponent<Scale>("Scale");
         world->registerComponent<Quad>("Quad");
         world->registerComponent<Sprite>("Sprite");
+        world->registerComponent<Text>("Text");
+        world->registerComponent<Color>("Color");
         
         window::Window *window = new window::Window();
         window->setWindow();
