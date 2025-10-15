@@ -24,7 +24,7 @@ namespace nebula {
         double deltaFps = currTime - prevFpsTime;
         // FPS update time is 1 second
         if (deltaFps > 1) {
-            fps = int(frames/deltaFps);
+            fps = int(frames/deltaFps + 0.5f);
             prevFpsTime = currTime;
             frames = 0;
         }

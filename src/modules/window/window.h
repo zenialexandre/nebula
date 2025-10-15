@@ -2,6 +2,8 @@
 
 #include "../Common/Module.hpp"
 
+#include "data/ImageFile.h"
+
 #include <string>
 #include <SDL3/SDL.h>
 
@@ -9,19 +11,42 @@ namespace nebula {
 
 namespace window {
 
+struct WindowSettings {
+    std::string title   = "nebula";
+    std::string icon;
+    bool fullscreen     = false;
+    bool resizable      = false;
+    bool borderless     = false;
+    bool centered       = true;
+    int vsync           = 1;
+    int x               = 0;
+    int y               = 0;
+    int display         = 0;
+    int fpsCap          = 0;
+};
+
 class Window : public Module {
 public:
     Window();
     ~Window();
-    void setWindow(int width = 800, int height = 600);
+
+    bool createWindow(int width = 800, int height = 600);
+    void setWindow(int width = 800, int height = 600, WindowSettings *ws = nullptr);
+
     void close();
+
+    void setTitle(std::string &title);
+    bool setIcon(std::string &iconPath);
+    void setFullscreen(const bool fullscreen);
+
     int getWidth();
     int getHeight();
+
     void swapBuffers();
+
     SDL_Window *getSDLWindow() const;
 
 private:
-    bool createWindow(int width, int height);
     void setGLContextAttributes();
     void setGLBufferAttributes();
 

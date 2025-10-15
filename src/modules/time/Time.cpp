@@ -25,7 +25,7 @@ namespace nebula {
         return dt->get();
     }
 
-    double Time::getFPS() const {
+    int Time::getFPS() const {
         return dt->getFPS();
     }
 } // time

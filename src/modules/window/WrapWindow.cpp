@@ -18,6 +18,18 @@ int w_setWindow(lua_State *L) {
     return 0;
 }
 
+int w_setTitle(lua_State *L) {
+    std::string title = luaL_checkstring(L, 1);
+    window()->setTitle(title);
+    return 0;
+}
+
+int w_setIcon(lua_State *L) {
+    std::string iconPath = luaL_checkstring(L, 1);
+    window()->setIcon(iconPath);
+    return 0;
+}
+
 int w_swapBuffers(lua_State *L) {
     if(lua_gettop(L) != 0) {
         luaL_error(L, "Invalid number of arguments.");
@@ -28,6 +40,8 @@ int w_swapBuffers(lua_State *L) {
 
 static const luaL_Reg functions[] = {
     {"setWindow", w_setWindow},
+    {"setTitle", w_setTitle},
+    {"setIcon", w_setIcon},
     {"swapBuffers", w_swapBuffers},
     {0, 0}
 };

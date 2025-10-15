@@ -8,7 +8,7 @@ class ImageFile {
 public:
     ImageFile(const char* filePath);
     ~ImageFile();
-    void read(unsigned char*& data, int& width, int& height, int& nrChannels);
+    void read(unsigned char*& data, int& width, int& height, int& nrChannels, int forceChannels = 0);
 private:
     const char* filePath;
     unsigned char* data;

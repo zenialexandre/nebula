@@ -17,7 +17,7 @@ public:
 
     double getDeltaTime() const;
 
-    double getFPS() const;
+    int getFPS() const;
 private:
     DeltaTime *dt;
 };

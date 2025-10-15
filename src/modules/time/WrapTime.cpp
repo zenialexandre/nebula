@@ -22,7 +22,7 @@ int w_getDeltaTime(lua_State *L) {
 }
 
 int w_getFPS(lua_State *L) {
-    lua_pushnumber(L, time()->getFPS());
+    lua_pushinteger(L, time()->getFPS());
     return 1;
 }
 

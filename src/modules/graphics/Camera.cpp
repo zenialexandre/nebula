@@ -15,9 +15,23 @@ Camera::Camera(int width,
     , viewMatrix(glm::mat4(1.0f))
     {}
 
-void Camera::moveCamera(glm::vec2 move) {
-    this->position.x += move.x;
-    this->position.y += move.y;
+void Camera::moveCamera(float x, float y) {
+    this->position.x -= x;
+    this->position.y -= y;
+    recalculateView();
+}
+
+void Camera::moveCameraTo(float x, float y) {
+    this->position.x = -x;
+    this->position.y = -y;
+    recalculateView();
+}
+
+void Camera::pointCameraTo(float x, float y) {
+    float pointX = width/2 - x;
+    float pointY = height/2 - y;
+    this->position.x = pointX;
+    this->position.y = pointY;
     recalculateView();
 }
 

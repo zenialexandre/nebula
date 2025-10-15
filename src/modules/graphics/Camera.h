@@ -12,7 +12,9 @@ public:
     Camera(int width, int height, float nearClip = -1.0f, float farClip = 1.0f);
     ~Camera() = default;
 
-    void moveCamera(glm::vec2 move);
+    void moveCamera(float x, float y);
+    void moveCameraTo(float x, float y);
+    void pointCameraTo(float x, float y);
 
     void set(int width, int height, float nearClip = -1.0f, float farClip = 1.0f);
     void setSize(int width, int height);

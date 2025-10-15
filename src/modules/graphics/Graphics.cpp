@@ -116,5 +116,17 @@ void Graphics::draw(ecs::EntityId entity) {
     renderer->drawEntity(entity);
 }
 
+void Graphics::moveCamera(float x, float y) {
+    defaultCamera->moveCamera(x, y);
+}
+
+void Graphics::moveCameraTo(float x, float y) {
+    defaultCamera->moveCameraTo(x, y);
+}
+
+void Graphics::pointCameraTo(float x, float y) {
+    defaultCamera->pointCameraTo(x, y);
+}
+
 }// graphics
 }// nebula

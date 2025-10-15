@@ -23,12 +23,17 @@ public:
     ~Graphics();
     bool initialize();
 
+    void moveCamera(float x, float y);
+    void moveCameraTo(float x, float y);
+    void pointCameraTo(float x, float y);
+
     void beginScene(ecs::World* world);
     void endScene();
     void draw(ecs::EntityId entity);
 
     Texture *newTexture(std::string path);
     Font *newFont(std::string path, uint32_t size = 12);
+
     void setWindowSize(int width, int height);
     void setBackground(float r, float g, float b, float a  = 1.0f);
 

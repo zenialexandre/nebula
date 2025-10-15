@@ -14,8 +14,8 @@ ImageFile::~ImageFile() {
     stbi_image_free(data);
 }
 
-void ImageFile::read(unsigned char*& data, int& width, int& height, int& nrChannels) {
-    data = stbi_load(filePath, &width, &height, &nrChannels, 0);
+void ImageFile::read(unsigned char*& data, int& width, int& height, int& nrChannels, int forceChannels) {
+    data = stbi_load(filePath, &width, &height, &nrChannels, forceChannels);
     this->data = data;
 }
 

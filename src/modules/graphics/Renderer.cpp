@@ -160,11 +160,19 @@ void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const 
     }
 
     // quad vertices
+    //glm::vec3 positions[4] = {
+    //    { position.x, position.y, 0.0f },                       // upper left
+    //    { position.x + size.x, position.y, 0.0f },              // upper right
+    //    { position.x + size.x, position.y + size.y, 0.0f },     // bottom right
+    //    { position.x, position.y + size.y, 0.0f }               // bottom left
+    //};
+
+    // quad vertices
     glm::vec3 positions[4] = {
-        { position.x, position.y, 0.0f },                       // upper left
-        { position.x + size.x, position.y, 0.0f },              // upper right
-        { position.x + size.x, position.y + size.y, 0.0f },     // bottom right
-        { position.x, position.y + size.y, 0.0f }               // bottom left
+        { 0.0f,   0.0f,    0.0f },  // top-left
+        { 1.0f,   0.0f,    0.0f },  // top-right  
+        { 1.0f,   1.0f,    0.0f },  // bottom-right
+        { 0.0f,   1.0f,    0.0f }   // bottom-left
     };
 
     glm::vec2 texCoords[4] = {
@@ -174,9 +182,14 @@ void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const 
         { 0.0f, 1.0f }
     };
 
+    glm::mat4 transform = glm::mat4(1.0f);
+    transform = glm::translate(transform, glm::vec3(position.x, position.y, 0.0f));
+    transform = glm::scale(transform, glm::vec3(size.x, size.y, 1.0f));
+
     // add vertices to the batch
     for (int i = 0; i < 4; i++) {
-        vertices[vertexCount].position = positions[i];
+        glm::vec4 transformedPos = transform * glm::vec4(positions[i], 1.0f);
+        vertices[vertexCount].position = glm::vec3(transformedPos);
         vertices[vertexCount].color = color;
         vertices[vertexCount].texCoord = texCoords[i];
         vertices[vertexCount].texIndex = textureIndex;

@@ -28,7 +28,7 @@ namespace nebula {
         world->registerComponent<Color>("Color");
         
         window::Window *window = new window::Window();
-        window->setWindow();
+        window->createWindow();
         
         graphics::Graphics *graphics = new graphics::Graphics(window->getWidth(), window->getHeight());
 

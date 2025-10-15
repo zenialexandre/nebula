@@ -74,6 +74,36 @@ int w_setBackground(lua_State *L) {
     return 0;
 }
 
+int w_moveCamera(lua_State *L) {
+    int count = lua_gettop(L);
+    float x = 0, y = 0;
+    if (count >= 1) {
+        x = (float) lua_tonumber(L, 1);
+    }
+    if (count == 2) {
+        y = (float) lua_tonumber(L, 2);
+    }
+
+    graphics()->moveCamera(x, y);
+    return 0;
+}
+
+int w_moveCameraTo(lua_State *L) {
+    float x = (float) lua_tonumber(L, 1);
+    float y = (float) lua_tonumber(L, 2);
+
+    graphics()->moveCameraTo(x, y);
+    return 0;
+}
+
+int w_pointCameraTo(lua_State *L) {
+    float x = (float) lua_tonumber(L, 1);
+    float y = (float) lua_tonumber(L, 2);
+
+    graphics()->pointCameraTo(x, y);
+    return 0;
+}
+
 int w_beginScene(lua_State *L) {
     graphics()->beginScene(ecs());
     return 0;
@@ -89,6 +119,9 @@ static const luaL_Reg functions[] = {
     {"newTexture", w_newTexture},
     {"newFont", w_newFont},
     {"setBackground", w_setBackground},
+    {"moveCamera", w_moveCamera},
+    {"moveCameraTo", w_moveCameraTo},
+    {"pointCameraTo", w_pointCameraTo},
     {"_beginScene", w_beginScene},
     {"_endScene", w_endScene},
     {0, 0}

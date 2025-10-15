@@ -18,10 +18,13 @@ Window::~Window() {
     close();
 }
 
-void Window::setWindow(int width, int height) {
-    this->width = width;
-    this->height = height;
-    createWindow(width, height);
+void Window::setWindow(int width, int height, WindowSettings *ws) {
+    if (!ws) {
+        return;
+    }
+
+    int num_displays = 0;
+    SDL_DisplayID *display_ids = SDL_GetDisplays(&num_displays);
 }
 
 void Window::close() {
@@ -51,7 +54,43 @@ bool Window::createWindow(int width, int height) {
         SDL_Log("%s", "ERROR::SDL::WINDOW::CREATE_CONTEXT");
         return false;
     }
+    this->width = width;
+    this->height = height;
     return true;
+}
+
+void Window::setTitle(std::string &title) {
+    SDL_SetWindowTitle(this->window, title.c_str());
+}
+
+bool Window::setIcon(std::string &iconPath) {
+    int width {}, height {}, nrChannels {};
+    unsigned char* data {};
+
+    data::ImageFile* iconFile = new data::ImageFile(iconPath.c_str());
+    iconFile->read(data, width, height, nrChannels, 4);
+
+    SDL_Surface *surface = SDL_CreateSurfaceFrom(
+        width,
+        height,
+        SDL_PIXELFORMAT_RGBA32,
+        data,
+        width * 4
+    );
+
+    if (!surface) {
+        return false;
+    }
+
+    SDL_SetWindowIcon(this->window, surface);
+
+    SDL_DestroySurface(surface);
+    delete iconFile;
+    return true;
+}
+
+void Window::setFullscreen(const bool fullscreen) {
+
 }
 
 int Window::getWidth() {
