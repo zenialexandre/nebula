@@ -5,6 +5,7 @@
 #include "WrapSprite.hpp"
 #include "WrapText.hpp"
 #include "WrapColor.hpp"
+#include "WrapRotation.hpp"
 
 #include <iostream>
 namespace nebula {
@@ -31,7 +32,8 @@ namespace nebula {
         QUAD = 3,
         SPRITE = 4,
         TEXT = 5,
-        COLOR = 6
+        COLOR = 6,
+        ROTATION = 7
     };
 
     struct LuaTableRef {
@@ -84,6 +86,9 @@ namespace nebula {
             return true;
         }
         if (name == "Color") {
+            return true;
+        }
+        if (name == "Rotation") {
             return true;
         }
         return false;
@@ -225,6 +230,9 @@ namespace nebula {
         if (componentId == COLOR) {
             return colorConstructor(L, argsCount == 1);
         }
+        if (componentId == ROTATION) {
+            return rotationConstructor(L, argsCount == 1);
+        }
 
         return 1;
     }
@@ -319,6 +327,9 @@ namespace nebula {
         if (safeComponentId == COLOR) {
             return addNebulaComponent<Color>(L, entId, cTabIdx, safeComponentId, metadataName);
         }
+        if (safeComponentId == ROTATION) {
+            return addNebulaComponent<Rotation>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
 
         lua_pushvalue(L, cTabIdx); // pushes the table to create a ref
         ecs()->addComponentSafe(entId, safeComponentId, LuaTableRef{luaL_ref(L, LUA_REGISTRYINDEX)});
@@ -372,6 +383,9 @@ namespace nebula {
         }
         if (safeComponentId == COLOR) {
             return getNebulaComponent<Color>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == ROTATION) {
+            return getNebulaComponent<Rotation>(L, entId, safeComponentId, metadataName);
         }
 
         LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, safeComponentId);
@@ -623,6 +637,7 @@ namespace nebula {
         nlua_ecs_sprite,
         nlua_ecs_text,
         nlua_ecs_color,
+        nlua_ecs_rotation,
         0
     };
 

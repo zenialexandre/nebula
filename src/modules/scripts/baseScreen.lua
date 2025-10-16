@@ -11,7 +11,6 @@ function nebula.setup()
     maruFont = nebula.graphics.newFont("resources/fonts/MaruMonica.ttf", 200)
 
     player = nebula.ecs.spawn()
-
     square = nebula.ecs.spawn()
 
     nebula.ecs.addComponent(player, Position({x = 10; y = 10}), Color({r = 0.0; g = 1.0; b = 0.0}), Text({font = maruFont; value = "TESTE"}))
@@ -20,6 +19,9 @@ function nebula.setup()
     --nebula.ecs.addComponent(player, Position({x = 10; y = 10}), Quad({height = 200; width = 200}))
     --nebula.ecs.addComponent(player, Position({x = 10; y = 10}), Sprite({texture = ninaTexture}))
     nebula.graphics.setBackground(0.1, 0.0, 0.1)
+
+    fullscreen = false
+    fullscreenkey = false
 end
 
 function nebula.update(dt)
@@ -42,6 +44,20 @@ function nebula.update(dt)
     end
     if (nebula.keyboard.isKeyPressed("space")) then
         nebula.graphics.pointCameraTo(pPosition.x, pPosition.y)
+    end
+    if (nebula.keyboard.isKeyPressed("f")) then
+        fullscreenkey = true
+    end
+    if nebula.keyboard.isKeyReleased("f") then
+        if fullscreenkey then
+            fullscreenkey = false
+            if (fullscreen) then
+                fullscreen = false
+            else
+                fullscreen = true
+            end
+            nebula.window.setFullscreen(fullscreen)
+        end
     end
 
     local fps = nebula.time.getFPS()

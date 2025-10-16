@@ -30,6 +30,18 @@ int w_setIcon(lua_State *L) {
     return 0;
 }
 
+int w_setFullscreen(lua_State *L) {
+    luaL_checktype(L, 1, LUA_TBOOLEAN);
+    bool fullscreen = lua_toboolean(L, 1);
+    bool desktopMode = true;
+    if (lua_gettop(L) == 2) {
+        luaL_checktype(L, 2, LUA_TBOOLEAN);
+        desktopMode = lua_toboolean(L, 2);
+    }
+    window()->setFullscreen(fullscreen, desktopMode);
+    return 0;
+}
+
 int w_swapBuffers(lua_State *L) {
     if(lua_gettop(L) != 0) {
         luaL_error(L, "Invalid number of arguments.");
@@ -39,9 +51,10 @@ int w_swapBuffers(lua_State *L) {
 }
 
 static const luaL_Reg functions[] = {
-    {"setWindow", w_setWindow},
+    //{"setWindow", w_setWindow},
     {"setTitle", w_setTitle},
     {"setIcon", w_setIcon},
+    {"setFullscreen", w_setFullscreen},
     {"swapBuffers", w_swapBuffers},
     {0, 0}
 };

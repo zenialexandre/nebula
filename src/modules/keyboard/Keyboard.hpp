@@ -25,7 +25,12 @@ public:
     Keyboard();
 
     bool isKeyPressed(const std::string &keyName);
+    bool isKeyReleased(const std::string &keyName);
+
+    void resetKeysReleased();
+    void pushKeyReleased(SDL_Scancode key);
 private:
+    bool keysReleased[SDL_SCANCODE_COUNT];
     SDL_Scancode keyToScancode(Key key);
 };
 

@@ -22,9 +22,6 @@ void Window::setWindow(int width, int height, WindowSettings *ws) {
     if (!ws) {
         return;
     }
-
-    int num_displays = 0;
-    SDL_DisplayID *display_ids = SDL_GetDisplays(&num_displays);
 }
 
 void Window::close() {
@@ -89,8 +86,33 @@ bool Window::setIcon(std::string &iconPath) {
     return true;
 }
 
-void Window::setFullscreen(const bool fullscreen) {
+void Window::setFullscreen(const bool fullscreen, const bool desktopMode) {
+    if (fullscreen) {
+        SDL_DisplayID displayId = SDL_GetDisplayForWindow(this->window);
+        const SDL_DisplayMode *currDisplayMode = SDL_GetCurrentDisplayMode(displayId);
 
+        this->originalDisplayMode = *currDisplayMode;
+
+        SDL_DisplayMode displayMode {};
+
+        if (desktopMode) {
+            SDL_SetWindowFullscreenMode(this->window, nullptr);
+        } else {
+            
+            if(SDL_GetClosestFullscreenDisplayMode(displayId, width, height, 0.0f, false, &displayMode)) {
+                SDL_SetWindowFullscreenMode(this->window, &displayMode);
+            }
+        }
+    } else {
+        SDL_SetWindowFullscreenMode(this->window, &this->originalDisplayMode);
+    }
+    if (SDL_SetWindowFullscreen(this->window, fullscreen)) {
+        SDL_GL_MakeCurrent(this->window, this->glContext);
+    }
+}
+
+void setSize(int width, int height) {
+    
 }
 
 int Window::getWidth() {

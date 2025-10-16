@@ -29,7 +29,9 @@ static std::unordered_map<std::string, Key> stringKeyMap = {
 };
 
 Keyboard::Keyboard()
-        : Module(KEYBOARD, "keyboard") { };
+        : Module(KEYBOARD, "keyboard") {
+    resetKeysReleased();
+};
 
 bool Keyboard::isKeyPressed(const std::string &keyName) {
     if (stringKeyMap.count(keyName) == 0) {
@@ -41,6 +43,29 @@ bool Keyboard::isKeyPressed(const std::string &keyName) {
     SDL_Scancode scancode = keyToScancode(key);
     return keyboardState[scancode]; 
 };
+
+bool Keyboard::isKeyReleased(const std::string &keyName) {
+    if (stringKeyMap.count(keyName) == 0) {
+        return false;
+    }
+    Key key = stringKeyMap.at(keyName);
+    
+    SDL_Scancode scancode = keyToScancode(key);
+    return keysReleased[scancode]; 
+};
+
+void Keyboard::resetKeysReleased() {
+    int scancode;
+    for (scancode = SDL_SCANCODE_UNKNOWN; scancode < SDL_SCANCODE_COUNT; ++scancode) {
+        if (keysReleased[scancode]) {
+            keysReleased[scancode] = false;
+        }
+    }   
+}
+
+void Keyboard::pushKeyReleased(SDL_Scancode key) {
+    keysReleased[key] = true;
+}
 
 SDL_Scancode Keyboard::keyToScancode(Key key) {
     switch (key) {

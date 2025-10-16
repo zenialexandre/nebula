@@ -13,7 +13,7 @@ namespace window {
 
 struct WindowSettings {
     std::string title   = "nebula";
-    std::string icon;
+    std::string icon    = "";
     bool fullscreen     = false;
     bool resizable      = false;
     bool borderless     = false;
@@ -21,7 +21,7 @@ struct WindowSettings {
     int vsync           = 1;
     int x               = 0;
     int y               = 0;
-    int display         = 0;
+    //int display         = 0;
     int fpsCap          = 0;
 };
 
@@ -37,7 +37,8 @@ public:
 
     void setTitle(std::string &title);
     bool setIcon(std::string &iconPath);
-    void setFullscreen(const bool fullscreen);
+    void setFullscreen(const bool fullscreen, const bool desktopMode = false);
+    void setSize(int width, int height);
 
     int getWidth();
     int getHeight();
@@ -52,6 +53,7 @@ private:
 
     SDL_Window *window;
     SDL_GLContext glContext;
+    SDL_DisplayMode originalDisplayMode;
 
     int width = 800;
     int height = 600;

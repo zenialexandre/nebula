@@ -65,6 +65,8 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/WrapText.cpp
     src/modules/ecs/WrapColor.hpp
     src/modules/ecs/WrapColor.cpp
+    src/modules/ecs/WrapRotation.hpp
+    src/modules/ecs/WrapRotation.cpp
     src/modules/ecs/RenderComponents.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC

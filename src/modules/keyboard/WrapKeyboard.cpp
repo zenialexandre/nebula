@@ -16,8 +16,25 @@ int w_isKeyPressed(lua_State *L) {
     return 1;
 }
 
+int w_isKeyReleased(lua_State *L) {
+    if (lua_gettop(L) != 1 || !luaL_checkstring(L, 1)) {
+        luaL_error(L, "Invalid key!");
+    }
+    const char* keyName = lua_tostring(L, 1);
+    const bool value = keyboard()->isKeyReleased(keyName);
+    lua_pushboolean(L, value);
+    return 1;
+}
+
+int w_resetKeysReleased(lua_State *L) {
+    keyboard()->resetKeysReleased();
+    return 0;
+}
+
 static const luaL_Reg functions[] = {
     {"isKeyPressed", w_isKeyPressed},
+    {"isKeyReleased", w_isKeyReleased},
+    {"_resetKeysReleased", w_resetKeysReleased},
     {0, 0}
 };
 

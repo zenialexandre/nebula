@@ -3,6 +3,7 @@
 #include <SDL3/SDL.h>
 
 #include "../common/Module.hpp"
+#include "../keyboard/Keyboard.hpp"
 
 #include <string>
 

@@ -49,6 +49,8 @@ function nebula.run()
             nebula.graphics._endScene()
             nebula.window.swapBuffers()
         end
+
+        nebula.keyboard._resetKeysReleased()
     end
 end
 
