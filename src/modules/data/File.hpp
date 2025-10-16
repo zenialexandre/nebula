@@ -24,15 +24,35 @@ public:
         return false;
     }
 
-    static inline std::string getRelativePath(const std::string &srcPath, const std::string &targetPath) {
+    static inline std::string setRelativePath(const std::string &srcPath, const std::string &targetPath) {
         if (!isValidPath(srcPath) || !isValidPath(targetPath)) {
             return "";
         }
 
         std::filesystem::path relative = std::filesystem::relative(targetPath, srcPath);
+        relativePath = relative.string();
 
-        return relative.string();
+        return relativePath;
     }
+
+    static inline std::string getRelativePath(std::string &target) {
+        if (relativePath.size() == 0) {
+            return std::string("").append(target);
+        }
+        std::string copy = relativePath;
+        return copy.append("\\").append(target);
+    }
+
+    static inline std::string getRelativePath(const char *target) {
+        if (relativePath.size() == 0) {
+            return std::string("").append(std::string(target));
+        }
+        std::string copy = relativePath;
+        return copy.append("\\").append(std::string(target));
+    }
+
+private:
+    static inline std::string relativePath {};
 };
 
 } // data

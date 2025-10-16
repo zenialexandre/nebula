@@ -133,7 +133,7 @@ void Renderer::flush() {
     textures.clear();
 }
 
-void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, Texture *texture) {
+void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, float rotation, Texture *texture) {
     if (indexCount >= MAX_INDICES) {
         flush();
     }
@@ -160,14 +160,6 @@ void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const 
     }
 
     // quad vertices
-    //glm::vec3 positions[4] = {
-    //    { position.x, position.y, 0.0f },                       // upper left
-    //    { position.x + size.x, position.y, 0.0f },              // upper right
-    //    { position.x + size.x, position.y + size.y, 0.0f },     // bottom right
-    //    { position.x, position.y + size.y, 0.0f }               // bottom left
-    //};
-
-    // quad vertices
     glm::vec3 positions[4] = {
         { 0.0f,   0.0f,    0.0f },  // top-left
         { 1.0f,   0.0f,    0.0f },  // top-right  
@@ -184,6 +176,11 @@ void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const 
 
     glm::mat4 transform = glm::mat4(1.0f);
     transform = glm::translate(transform, glm::vec3(position.x, position.y, 0.0f));
+    if (rotation > 0) {
+        transform = glm::translate(transform, glm::vec3(size.x * 0.5f, size.y * 0.5f, 0.0f));
+        transform = glm::rotate(transform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+        transform = glm::translate(transform, glm::vec3(-size.x * 0.5f, -size.y * 0.5f, 0.0f));
+    }
     transform = glm::scale(transform, glm::vec3(size.x, size.y, 1.0f));
 
     // add vertices to the batch
@@ -199,7 +196,7 @@ void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const 
     indexCount += 6;
 }
 
-void Renderer::drawText(const std::string& text, Font* font, const glm::vec2& position, const glm::vec4& color, const glm::vec2& scale) {
+void Renderer::drawText(const std::string& text, Font* font, const glm::vec2& position, const glm::vec4& color, const glm::vec2& scale, const float rotation) {
     if (!font) return;
 
     float x = position.x;
@@ -225,6 +222,7 @@ void Renderer::drawText(const std::string& text, Font* font, const glm::vec2& po
             glm::vec2(xpos, ypos),
             glm::vec2(w, h),
             color,
+            0, // rotation, use 0 because it is not working properly for text
             ch.texture
         );
 
@@ -240,6 +238,7 @@ void Renderer::drawEntity(ecs::EntityId entity) {
     Position *pos = world->getComponent<Position>(entity);
     Scale *scale = world->getComponent<Scale>(entity);
     Color *color = world->getComponent<Color>(entity);
+    Rotation *rotation = world->getComponent<Rotation>(entity);
 
     float scaleX = 1.0f, scaleY = 1.0f;
 
@@ -256,6 +255,12 @@ void Renderer::drawEntity(ecs::EntityId entity) {
         b = color->b;
     }
 
+    float rotationValue = 0.0f;
+
+    if (rotation) {
+        rotationValue = rotation->value;
+    }
+
     if (world->hasComponent<Sprite>(entity)) {
         Sprite *sprite = world->getComponent<Sprite>(entity);
         drawQuad(
@@ -265,6 +270,7 @@ void Renderer::drawEntity(ecs::EntityId entity) {
                 sprite->texture->height * scaleY
             ),
             glm::vec4(r, g, b, 0.0f),
+            rotationValue,
             sprite->texture
         );
     }
@@ -277,6 +283,7 @@ void Renderer::drawEntity(ecs::EntityId entity) {
                 quad->height * scaleY
             ),
             glm::vec4(r, g, b, 0.0f),
+            rotationValue,
             nullptr
         );
     }
@@ -287,7 +294,8 @@ void Renderer::drawEntity(ecs::EntityId entity) {
             text->font,
             glm::vec2(pos->x, pos->y),
             glm::vec4(r, g, b, 1.0f),
-            glm::vec2(scaleX, scaleY)
+            glm::vec2(scaleX, scaleY),
+            rotationValue
         );
     }
 }

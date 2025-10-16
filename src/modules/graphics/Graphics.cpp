@@ -86,7 +86,7 @@ Font *Graphics::newFont(std::string path, uint32_t size) {
     return font;
 }
 
-void Graphics::setWindowSize(int width, int height) {
+void Graphics::onWindowSizeChange(int width, int height) {
     this->width = width;
     this->height = height;
     this->defaultCamera->setSize(width, height);

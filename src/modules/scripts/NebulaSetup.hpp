@@ -7,6 +7,7 @@
 #include <Event/WrapEvent.hpp>
 #include <Keyboard/WrapKeyboard.hpp>
 #include <Mouse/WrapMouse.hpp>
+#include <Physics/WrapPhysics.hpp>
 
 extern "C" {
     #include <lua.h>
@@ -26,6 +27,8 @@ namespace nebula {
         world->registerComponent<Sprite>("Sprite");
         world->registerComponent<Text>("Text");
         world->registerComponent<Color>("Color");
+        world->registerComponent<Rotation>("Rotation");
+        world->registerComponent<CollisionBox>("CollisionBox");
         
         window::Window *window = new window::Window();
         window->createWindow();
@@ -34,6 +37,7 @@ namespace nebula {
 
         time::Time *time = new time::Time();
         event::Event *event = new event::Event();
+        physics::Physics *physics = new physics::Physics(world);
         keyboard::Keyboard *keyboard = new keyboard::Keyboard();
         mouse::Mouse *mouse = new mouse::Mouse();
 

@@ -34,7 +34,7 @@ public:
     Texture *newTexture(std::string path);
     Font *newFont(std::string path, uint32_t size = 12);
 
-    void setWindowSize(int width, int height);
+    void onWindowSizeChange(int width, int height);
     void setBackground(float r, float g, float b, float a  = 1.0f);
 
 private:

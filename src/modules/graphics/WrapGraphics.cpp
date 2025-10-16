@@ -1,5 +1,6 @@
 #include "WrapGraphics.hpp"
 #include "WrapTexture.hpp"
+#include "WrapFont.hpp"
 
 namespace nebula {
 
@@ -20,7 +21,8 @@ int w_newTexture(lua_State *L) {
     }
 
     const char* filePath = lua_tostring(L, 1);
-    Texture *texture = graphics()->newTexture(filePath);
+    std::string filePathRelative = data::File::getRelativePath(filePath);
+    Texture *texture = graphics()->newTexture(filePathRelative);
     if (texture == nullptr) {
         luaL_error(L, "Something went wrong when creating a sprite");
     }
@@ -37,13 +39,14 @@ int w_newFont(lua_State *L) {
     }
 
     const char* filePath = lua_tostring(L, 1);
+    std::string filePathRelative = data::File::getRelativePath(filePath);
     Font *font = nullptr;
     if (count == 1) {
-        font = graphics()->newFont(filePath);
+        font = graphics()->newFont(filePathRelative);
     }
     if (count == 2) {
         const int fontSize = luaL_checkinteger(L, 2);
-        font = graphics()->newFont(filePath, fontSize);
+        font = graphics()->newFont(filePathRelative, fontSize);
     }
 
     if (font == nullptr) {
@@ -129,6 +132,7 @@ static const luaL_Reg functions[] = {
 
 static const lua_CFunction types[] = {
     nlua_graphics_texture,
+    nlua_graphics_font,
     0
 };
 

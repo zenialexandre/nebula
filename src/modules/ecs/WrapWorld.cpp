@@ -6,6 +6,7 @@
 #include "WrapText.hpp"
 #include "WrapColor.hpp"
 #include "WrapRotation.hpp"
+#include "WrapCollisionBox.hpp"
 
 #include <iostream>
 namespace nebula {
@@ -33,7 +34,8 @@ namespace nebula {
         SPRITE = 4,
         TEXT = 5,
         COLOR = 6,
-        ROTATION = 7
+        ROTATION = 7,
+        COLLISIONBOX = 8
     };
 
     struct LuaTableRef {
@@ -89,6 +91,9 @@ namespace nebula {
             return true;
         }
         if (name == "Rotation") {
+            return true;
+        }
+        if (name == "CollisionBox") {
             return true;
         }
         return false;
@@ -233,6 +238,9 @@ namespace nebula {
         if (componentId == ROTATION) {
             return rotationConstructor(L, argsCount == 1);
         }
+        if (componentId == COLLISIONBOX) {
+            return collisionBoxConstructor(L, argsCount == 1);
+        }
 
         return 1;
     }
@@ -330,6 +338,9 @@ namespace nebula {
         if (safeComponentId == ROTATION) {
             return addNebulaComponent<Rotation>(L, entId, cTabIdx, safeComponentId, metadataName);
         }
+        if (safeComponentId == COLLISIONBOX) {
+            return addNebulaComponent<CollisionBox>(L, entId, cTabIdx, safeComponentId, metadataName);
+        }
 
         lua_pushvalue(L, cTabIdx); // pushes the table to create a ref
         ecs()->addComponentSafe(entId, safeComponentId, LuaTableRef{luaL_ref(L, LUA_REGISTRYINDEX)});
@@ -386,6 +397,9 @@ namespace nebula {
         }
         if (safeComponentId == ROTATION) {
             return getNebulaComponent<Rotation>(L, entId, safeComponentId, metadataName);
+        }
+        if (safeComponentId == COLLISIONBOX) {
+            return getNebulaComponent<CollisionBox>(L, entId, safeComponentId, metadataName);
         }
 
         LuaTableRef* tabRef = ecs()->getComponentSafe<LuaTableRef>(entId, safeComponentId);
@@ -638,6 +652,7 @@ namespace nebula {
         nlua_ecs_text,
         nlua_ecs_color,
         nlua_ecs_rotation,
+        nlua_ecs_collisionBox,
         0
     };
 

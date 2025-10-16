@@ -53,6 +53,7 @@ bool Window::createWindow(int width, int height) {
     }
     this->width = width;
     this->height = height;
+    centerScreen();
     return true;
 }
 
@@ -88,31 +89,56 @@ bool Window::setIcon(std::string &iconPath) {
 
 void Window::setFullscreen(const bool fullscreen, const bool desktopMode) {
     if (fullscreen) {
-        SDL_DisplayID displayId = SDL_GetDisplayForWindow(this->window);
-        const SDL_DisplayMode *currDisplayMode = SDL_GetCurrentDisplayMode(displayId);
-
-        this->originalDisplayMode = *currDisplayMode;
-
-        SDL_DisplayMode displayMode {};
-
         if (desktopMode) {
             SDL_SetWindowFullscreenMode(this->window, nullptr);
         } else {
+            SDL_DisplayID displayId = SDL_GetDisplayForWindow(this->window);
+            SDL_DisplayMode displayMode {};
+
+            SDL_DisplayMode currDisplayMode = *SDL_GetCurrentDisplayMode(displayId);
+            this->originalDisplayMode = &currDisplayMode;
             
             if(SDL_GetClosestFullscreenDisplayMode(displayId, width, height, 0.0f, false, &displayMode)) {
                 SDL_SetWindowFullscreenMode(this->window, &displayMode);
             }
         }
     } else {
-        SDL_SetWindowFullscreenMode(this->window, &this->originalDisplayMode);
+        if (!desktopMode) {
+            SDL_SetWindowFullscreenMode(this->window, this->originalDisplayMode);
+        }
     }
     if (SDL_SetWindowFullscreen(this->window, fullscreen)) {
         SDL_GL_MakeCurrent(this->window, this->glContext);
     }
 }
 
-void setSize(int width, int height) {
-    
+void Window::setSize(int width, int height) {
+    SDL_SetWindowSize(this->window, width, height);
+    centerScreen();
+}
+
+void Window::setResizable(const bool resizable) {
+    SDL_SetWindowResizable(this->window, resizable);
+}
+
+void Window::setBorderless(const bool borderless) {
+    SDL_SetWindowBordered(this->window, !borderless);
+}
+
+// SDL Documentation:
+// 0 for immediate updates, 1 for updates synchronized with the vertical retrace, -1 for adaptive vsync.
+void Window::setVsync(int vsync) {
+    SDL_GL_SetSwapInterval(vsync);
+}
+
+void Window::onSizeChange() {
+    SDL_GetWindowSize(this->window, &this->width, &this->height);
+}
+
+void Window::centerScreen() {
+    SDL_DisplayID displayId = SDL_GetDisplayForWindow(this->window);
+    auto center = SDL_WINDOWPOS_CENTERED_DISPLAY(displayId);
+    SDL_SetWindowPosition(window, center, center);
 }
 
 int Window::getWidth() {

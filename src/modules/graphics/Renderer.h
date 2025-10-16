@@ -30,9 +30,9 @@ public:
     void end();
     void flush();
 
-    void drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, Texture* texture = nullptr);
+    void drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float rotation, Texture* texture = nullptr);
 
-    void drawText(const std::string& text, Font* font, const glm::vec2& position, const glm::vec4& color, const glm::vec2& scale);
+    void drawText(const std::string& text, Font* font, const glm::vec2& position, const glm::vec4& color, const glm::vec2& scale, const float rotation);
 
     void drawEntity(ecs::EntityId entity);
 

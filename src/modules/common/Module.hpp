@@ -13,6 +13,7 @@ enum ModuleDef {
     EVENT,
     KEYBOARD,
     MOUSE,
+    PHYSICS,
     AUDIO,
     MODULES_SIZE
 };

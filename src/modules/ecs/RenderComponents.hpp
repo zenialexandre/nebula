@@ -33,3 +33,8 @@ struct Color {
 struct Rotation {
     float value;
 };
+
+struct CollisionBox {
+    float width, height;
+    float x, y;
+};

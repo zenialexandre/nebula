@@ -67,6 +67,8 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/WrapColor.cpp
     src/modules/ecs/WrapRotation.hpp
     src/modules/ecs/WrapRotation.cpp
+    src/modules/ecs/WrapCollisionBox.hpp
+    src/modules/ecs/WrapCollisionBox.cpp
     src/modules/ecs/RenderComponents.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC
@@ -90,6 +92,8 @@ add_library(nebula_graphics STATIC
     src/modules/graphics/WrapGraphics.hpp
     src/modules/graphics/WrapTexture.cpp
     src/modules/graphics/WrapTexture.hpp
+    src/modules/graphics/WrapFont.cpp
+    src/modules/graphics/WrapFont.hpp
 )
 target_link_libraries(nebula_graphics PUBLIC 
     SDL3::SDL3
@@ -150,6 +154,17 @@ target_link_libraries(nebula_mouse PUBLIC
     nebula_window
 )
 
+add_library(nebula_physics STATIC
+    src/modules/physics/Physics.hpp
+    src/modules/physics/Physics.cpp
+    src/modules/physics/WrapPhysics.hpp
+    src/modules/physics/WrapPhysics.cpp
+)
+target_link_libraries(nebula_physics PUBLIC 
+    nebula_ecs
+    nebula_common
+)
+
 add_library(nebula_event STATIC
     src/modules/event/Event.hpp
     src/modules/event/Event.cpp
@@ -176,6 +191,7 @@ target_link_libraries(nebula_scripts PUBLIC
     nebula_event
     nebula_keyboard
     nebula_mouse
+    nebula_physics
 )
 target_include_directories(nebula_scripts PUBLIC
     src/modules/scripts/boot.lua
@@ -214,6 +230,11 @@ add_subdirectory(libs/SDL3)
 add_subdirectory(libs/lua-5.4.8)
 add_subdirectory(libs/freetype-2.14.1)
 
+#add_executable(nebula_console)
+#target_sources(nebula_console PRIVATE src/nebula.cpp)
+#target_link_libraries(nebula_console ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
+
+#add_executable(nebula WIN32)
 add_executable(nebula)
 target_sources(nebula PRIVATE src/nebula.cpp)
 target_link_libraries(nebula ${NEBULA_MODULES} ${NEBULA_LIBRARIES})

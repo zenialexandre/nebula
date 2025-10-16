@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Graphics.h"
+#include "../data/File.hpp"
 #include "../common/WrapModule.hpp"
 #include "../common/LuaBidings.hpp"
 

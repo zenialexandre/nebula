@@ -17,6 +17,13 @@ NebulaEvent *Event::poll() {
                 keyboard->pushKeyReleased(sdlEvent.key.scancode);
                 return new NebulaEvent("keyReleased");
             }
+            case SDL_EVENT_WINDOW_RESIZED: {
+                window::Window *window = ModuleRegistry::getInstance<window::Window>(WINDOW);
+                graphics::Graphics *graphics = ModuleRegistry::getInstance<graphics::Graphics>(GRAPHICS);
+                window->onSizeChange();
+                graphics->onWindowSizeChange(window->getWidth(), window->getHeight());
+                return new NebulaEvent("windowResized");
+            }
             case SDL_EVENT_QUIT: {
                 return new NebulaEvent("quit");
             }

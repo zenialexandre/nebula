@@ -3,18 +3,16 @@
 namespace nebula {
 
 #define window() (ModuleRegistry::getInstance<window::Window>(WINDOW))
-#define graphics() (ModuleRegistry::getInstance<graphics::Graphics>(GRAPHICS))
 
     namespace window {
 
-int w_setWindow(lua_State *L) {
+int w_setSize(lua_State *L) {
     if(lua_gettop(L) != 2) {
         luaL_error(L, "Invalid number of arguments.");
     }
     int width = luaL_checkinteger(L, 1);
     int height = luaL_checkinteger(L, 2);
-    window()->setWindow(width, height);
-    graphics()->setWindowSize(width, height);
+    window()->setSize(width, height);
     return 0;
 }
 
@@ -26,19 +24,43 @@ int w_setTitle(lua_State *L) {
 
 int w_setIcon(lua_State *L) {
     std::string iconPath = luaL_checkstring(L, 1);
-    window()->setIcon(iconPath);
+    std::string iconPathRelative = data::File::getRelativePath(iconPath);
+    window()->setIcon(iconPathRelative);
     return 0;
 }
 
 int w_setFullscreen(lua_State *L) {
     luaL_checktype(L, 1, LUA_TBOOLEAN);
     bool fullscreen = lua_toboolean(L, 1);
-    bool desktopMode = true;
+    bool desktopMode = false;
     if (lua_gettop(L) == 2) {
         luaL_checktype(L, 2, LUA_TBOOLEAN);
         desktopMode = lua_toboolean(L, 2);
     }
     window()->setFullscreen(fullscreen, desktopMode);
+    return 0;
+}
+
+int w_setResizable(lua_State *L) {
+    luaL_checktype(L, 1, LUA_TBOOLEAN);
+    bool resizable = lua_toboolean(L, 1);
+    window()->setResizable(resizable);
+    return 0;
+}
+
+int w_setBorderless(lua_State *L) {
+    luaL_checktype(L, 1, LUA_TBOOLEAN);
+    bool borderless = lua_toboolean(L, 1);
+    window()->setBorderless(borderless);
+    return 0;
+}
+
+int w_setVsync(lua_State *L) {
+    int vsync = luaL_checkinteger(L, 1);
+    if (-1 < vsync || vsync > 1) {
+        return 0;
+    }
+    window()->setVsync(vsync);
     return 0;
 }
 
@@ -52,9 +74,13 @@ int w_swapBuffers(lua_State *L) {
 
 static const luaL_Reg functions[] = {
     //{"setWindow", w_setWindow},
+    {"setSize", w_setSize},
     {"setTitle", w_setTitle},
     {"setIcon", w_setIcon},
     {"setFullscreen", w_setFullscreen},
+    {"setResizable", w_setResizable},
+    {"setBorderless", w_setBorderless},
+    {"setVsync", w_setVsync},
     {"swapBuffers", w_swapBuffers},
     {0, 0}
 };

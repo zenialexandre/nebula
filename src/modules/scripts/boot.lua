@@ -22,6 +22,17 @@ function nebula.boot()
     require("nebula.event")
     require("nebula.keyboard")
     require("nebula.mouse")
+    require("nebula.physics")
+end
+
+function nebula.error()
+    eventName = nebula.event.poll()
+    while eventName ~= nil do
+        if eventName == "quit" then
+            return 0
+        end
+        eventName = nebula.event.poll()
+    end
 end
 
 function nebula.run()
@@ -71,7 +82,7 @@ return function()
             return 0
         end
         if not ok then
-            return 0
+            nRun = nebula.error
         end
         coroutine.yield()
     end

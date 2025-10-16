@@ -39,6 +39,11 @@ public:
     bool setIcon(std::string &iconPath);
     void setFullscreen(const bool fullscreen, const bool desktopMode = false);
     void setSize(int width, int height);
+    void setResizable(const bool resizable);
+    void setBorderless(const bool borderless);
+    void setVsync(int vsync);
+
+    void onSizeChange();
 
     int getWidth();
     int getHeight();
@@ -51,9 +56,11 @@ private:
     void setGLContextAttributes();
     void setGLBufferAttributes();
 
+    void centerScreen();
+
     SDL_Window *window;
     SDL_GLContext glContext;
-    SDL_DisplayMode originalDisplayMode;
+    SDL_DisplayMode *originalDisplayMode = nullptr;
 
     int width = 800;
     int height = 600;

@@ -59,7 +59,7 @@ static RunAction runNebula(int argc, char **argv, int &mainReturn) {
         }
 
         if (gamePath.size() != 0) {
-            gamePath = nebula::data::File::getRelativePath(nebulaExePath, gamePath);
+            gamePath = nebula::data::File::setRelativePath(nebulaExePath, gamePath);
             gamePath.append("\\main.lua");
         } else {
             gamePath = "main.lua";
