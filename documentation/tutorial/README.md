@@ -132,4 +132,4 @@ And voilà, our code is ready! To run it, put the nebula executable in the same 
 
 Running the code should open a window like this:
 
-img
+<img width="406" height="325" alt="image" src="https://github.com/user-attachments/assets/57cba878-5ee6-4872-818d-c25bc562429e" />
