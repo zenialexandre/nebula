@@ -6,6 +6,12 @@ namespace nebula {
 
     namespace window {
 
+int w_getSize(lua_State *L) {
+    lua_pushinteger(L, window()->getWidth());
+    lua_pushinteger(L, window()->getHeight());
+    return 2;
+}
+
 int w_setSize(lua_State *L) {
     if(lua_gettop(L) != 2) {
         luaL_error(L, "Invalid number of arguments.");
@@ -74,6 +80,7 @@ int w_swapBuffers(lua_State *L) {
 
 static const luaL_Reg functions[] = {
     //{"setWindow", w_setWindow},
+    {"getSize", w_getSize},
     {"setSize", w_setSize},
     {"setTitle", w_setTitle},
     {"setIcon", w_setIcon},
