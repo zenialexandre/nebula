@@ -53,6 +53,8 @@ function nebula.setup()
         Quad({width = winWidth, height = 30}),
         CollisionBox({width = winWidth, height = 30})
     )
+
+    nebula.window.setTitle("pong")
 end
 
 function nebula.update(dt)
@@ -94,13 +96,13 @@ function nebula.update(dt)
         ballSpeed.y = - ballSpeed.y
     end
     if nebula.physics.checkCollision(ball, pong1) then
-        if ballPos.x < 30 then
+        if ballPos.x < 20 then
             ballSpeed.y = - ballSpeed.y
         end
         ballSpeed.x = - ballSpeed.x
     end
     if nebula.physics.checkCollision(ball, pong2) then
-        if ballPos.x > winWidth - 30 then
+        if ballPos.x > winWidth - 20 then
             ballSpeed.y = - ballSpeed.y
         end
         ballSpeed.x = - ballSpeed.x

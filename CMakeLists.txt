@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.26)
 
+# Build in release mode: 
+# cmake -B release -DCMAKE_BUILD_TYPE=Release
+# cmake --build build --config Release
+
 project(nebula VERSION 0.1.0)
 
 # This moves the SDL dll to the right place (when BUILD_SHARED_LIBS is ON)
