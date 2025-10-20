@@ -14,7 +14,7 @@
 
 ## Tutorial
 
-Check the tutorial.
+Check the [tutorial](https://github.com/maumafra/nebula/tree/main/documentation/tutorial).
 
 ## Examples
 
