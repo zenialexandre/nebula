@@ -2,20 +2,20 @@
 
 | Functions | Description |
 |------|-------------|
-|[nebula.graphics.draw](###nebula.graphics.draw)| Draws an entity.
-|[nebula.graphics.newTexture](###nebula.graphics.newTexture)| Creates a new Texture.
-|[nebula.graphics.newFont](###nebula.graphics.newFont)| Creates a new Font.
-|[nebula.graphics.setBackground](###nebula.graphics.setBackground)| Sets the color of the background.
-|[nebula.graphics.moveCamera](###nebula.graphics.moveCamera)| Moves the camera.
-|[nebula.graphics.moveCameraTo](###nebula.graphics.moveCameraTo)| Moves the camera to a point.
-|[nebula.graphics.pointCameraTo](###nebula.graphics.pointCameraTo)| Points the center of the camera to a point.
-|[nebula.graphics._beginScene](###nebula.graphics._beginScene)| Mainly for internal uses. Starts the rendering process.
-|[nebula.graphics._endScene](###nebula.graphics._endScene)| Mainly for internal uses. Ends the rendering process.
+|[nebula.graphics.draw](#nebulagraphicsdraw)| Draws an entity.
+|[nebula.graphics.newTexture](#nebulagraphicsnewTexture)| Creates a new Texture.
+|[nebula.graphics.newFont](#nebulagraphicsnewFont)| Creates a new Font.
+|[nebula.graphics.setBackground](#nebulagraphicssetBackground)| Sets the color of the background.
+|[nebula.graphics.moveCamera](#nebulagraphicsmoveCamera)| Moves the camera.
+|[nebula.graphics.moveCameraTo](#nebulagraphicsmoveCameraTo)| Moves the camera to a point.
+|[nebula.graphics.pointCameraTo](#nebulagraphicspointCameraTo)| Points the center of the camera to a point.
+|[nebula.graphics._beginScene](#nebulagraphics_beginScene)| Mainly for internal uses. Starts the rendering process.
+|[nebula.graphics._endScene](#nebulagraphics_endScene)| Mainly for internal uses. Ends the rendering process.
 
 | Types |
 |------|
-| [Texture](###Texture)
-| [Font](###Font)
+| [Texture](#Texture)
+| [Font](#Font)
 
 ---
 
