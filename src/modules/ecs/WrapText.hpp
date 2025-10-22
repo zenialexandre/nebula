@@ -28,7 +28,7 @@ namespace nebula {
             } else if (strcmp(keyName, "value") == 0) {
                 text->value = luaL_checkstring(L, -1);
             } else {
-                luaL_error(L, "Invalid field: %s", keyName);
+                luaL_error(L, "Invalid field: Text.%s", keyName);
             }
             lua_pop(L, 1); // pops value
         }

@@ -29,7 +29,7 @@ namespace nebula {
                 } else if (strcmp(keyName, "y") == 0) {
                     collisionBox->y = (float)luaL_checknumber(L, -1);
                 } else {
-                    luaL_error(L, "Invalid field: %s", keyName);
+                    luaL_error(L, "Invalid field: CollisionBox.%s", keyName);
                 }
 
                 lua_pop(L, 1); // pops value

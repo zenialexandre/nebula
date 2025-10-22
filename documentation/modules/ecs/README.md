@@ -4,25 +4,25 @@
 |------|-------------|
 |[nebula.ecs.spawn](#nebulaecsspawn)| Spawns an entity.
 |[nebula.ecs.component](#nebulaecscomponent)| Defines a component.
-|[nebula.ecs.addComponent](#nebulaecsaddComponent)| Adds component(s) to an entiy.
-|[nebula.ecs.getComponent](#nebulaecsgetComponent)| Gets component(s) from an entity.
-|[nebula.ecs.removeComponent](#nebulaecsremoveComponent)| Removes component(s) from an entity.
-|[nebula.ecs.hasComponent](#nebulaecshasComponent)| Checks if an entity has component(s).
-|[nebula.ecs.getEntitiesWith](#nebulaecsgetEntitiesWith)| Gets all the entities with the component(s).
+|[nebula.ecs.addComponent](#nebulaecsaddcomponent)| Adds component(s) to an entiy.
+|[nebula.ecs.getComponent](#nebulaecsgetcomponent)| Gets component(s) from an entity.
+|[nebula.ecs.removeComponent](#nebulaecsremovecomponent)| Removes component(s) from an entity.
+|[nebula.ecs.hasComponent](#nebulaecshascomponent)| Checks if an entity has component(s).
+|[nebula.ecs.getEntitiesWith](#nebulaecsgetentitieswith)| Gets all the entities with the component(s).
 |[nebula.ecs.print](#nebulaecsprint)| Prints the world state. (mainly for Debug)
 
 ---
 
 | Nebula Pre-Made Components |
 |------|
-|[Position](#Position)
-|[Scale](#Scale)
-|[Quad](#Quad)
-|[Sprite](#Sprite)
-|[Text](#Text)
-|[Color](#Color)
-|[Rotation](#Rotation)
-|[CollisionBox](#CollisionBox)
+|[Position](#position)
+|[Scale](#scale)
+|[Quad](#quad)
+|[Sprite](#sprite)
+|[Text](#text)
+|[Color](#color)
+|[Rotation](#rotation)
+|[CollisionBox](#collisionbox)
 
 ---
 

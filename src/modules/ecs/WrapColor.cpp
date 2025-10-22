@@ -1,4 +1,4 @@
-#include "WrapQuad.hpp"
+#include "WrapColor.hpp"
 
 namespace nebula {
     namespace ecs {
@@ -35,7 +35,7 @@ namespace nebula {
         } else if (strcmp(key, "a") == 0) {
             color->a = (float)luaL_checknumber(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Color.%s", key);
         }
 
         return 0;
@@ -45,6 +45,11 @@ namespace nebula {
         Color* color = (Color*)luaL_checkudata(L, 1, "Color");
         lua_pushfstring(L, "Color(r: %f, g: %f, b: %f, a: %f)", color->r, color->g, color->b, color->a);
         return 1;
+    }
+
+    static int w_colorGc(lua_State *L) {
+        Color *color = (Color*)luaL_checkudata(L, 1, "Color");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -61,6 +66,7 @@ namespace nebula {
         {"__index", w_colorIndex},
         {"__newindex", w_colorNewIndex},
         {"__tostring", w_colorToString},
+        {"__gc", w_colorGc},
         {0, 0}
     };
 

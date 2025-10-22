@@ -27,7 +27,7 @@ namespace nebula {
         } else if (strcmp(key, "height") == 0) {
             quad->height = (float)luaL_checknumber(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Quad.%s", key);
         }
 
         return 0;
@@ -37,6 +37,11 @@ namespace nebula {
         Quad* quad = (Quad*)luaL_checkudata(L, 1, "Quad");
         lua_pushfstring(L, "Quad(w: %f, h: %f)", quad->width, quad->height);
         return 1;
+    }
+
+    static int w_quadGc(lua_State *L) {
+        Quad *color = (Quad*)luaL_checkudata(L, 1, "Quad");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -53,6 +58,7 @@ namespace nebula {
         {"__index", w_quadIndex},
         {"__newindex", w_quadNewIndex},
         {"__tostring", w_quadToString},
+        {"__gc", w_quadGc},
         {0, 0}
     };
 

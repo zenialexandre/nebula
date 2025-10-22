@@ -24,7 +24,7 @@ namespace nebula {
                 }
                 sprite->texture = (graphics::Texture*)lua_touserdata(L, -1);
             } else {
-                luaL_error(L, "Invalid field: %s", keyName);
+                luaL_error(L, "Invalid field: Sprite.%s", keyName);
             }
             lua_pop(L, 1); // pops value
         }

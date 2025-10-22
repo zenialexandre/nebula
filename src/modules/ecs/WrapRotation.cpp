@@ -23,7 +23,7 @@ namespace nebula {
         if (strcmp(key, "value") == 0) {
             rotation->value = (float)luaL_checknumber(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Rotation.%s", key);
         }
 
         return 0;
@@ -33,6 +33,11 @@ namespace nebula {
         Rotation* rotation = (Rotation*)luaL_checkudata(L, 1, "Rotation");
         lua_pushfstring(L, "Rotation(%f)", rotation->value);
         return 1;
+    }
+
+    static int w_rotationGc(lua_State *L) {
+        Rotation *color = (Rotation*)luaL_checkudata(L, 1, "Rotation");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -49,6 +54,7 @@ namespace nebula {
         {"__index", w_rotationIndex},
         {"__newindex", w_rotationNewIndex},
         {"__tostring", w_rotationToString},
+        {"__gc", w_rotationGc},
         {0, 0}
     };
 

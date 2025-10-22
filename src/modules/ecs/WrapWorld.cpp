@@ -361,6 +361,9 @@ namespace nebula {
         lua_pushlightuserdata(L, pointer);
         luaL_getmetatable(L, metadataName);
         lua_setmetatable(L, -2);
+
+        void* pushedPtr = lua_touserdata(L, -1);
+        std::cout << "[DEBUG] Pushed pointer: " << pushedPtr << std::endl;
         return 1;
     }
 
@@ -376,6 +379,8 @@ namespace nebula {
             lua_pushstring(L, metadataName);
             luaL_error(L, "The Component %s does not exists anymore");
         }
+
+        std::cout << "[C++] ent: " << entId << " | metadataId: " << metadataId << " | metadataName: " << metadataName << " | safeComponentId: " << safeComponentId << std::endl;
 
         if (safeComponentId == POSITION) {
             return getNebulaComponent<Position>(L, entId, safeComponentId, metadataName);

@@ -26,7 +26,7 @@ namespace nebula {
             }
             sprite->texture = (graphics::Texture*)lua_touserdata(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Sprite.%s", key);
         }
 
         return 0;
@@ -36,6 +36,11 @@ namespace nebula {
         Sprite* sprite = (Sprite*)luaL_checkudata(L, 1, "Sprite");
         lua_pushfstring(L, "Sprite");
         return 1;
+    }
+
+    static int w_spriteGc(lua_State *L) {
+        Sprite *color = (Sprite*)luaL_checkudata(L, 1, "Sprite");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -52,6 +57,7 @@ namespace nebula {
         {"__index", w_spriteIndex},
         {"__newindex", w_spriteNewIndex},
         {"__tostring", w_spriteToString},
+        {"__gc", w_spriteGc},
         {0, 0}
     };
 

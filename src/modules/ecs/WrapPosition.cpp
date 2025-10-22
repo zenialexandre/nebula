@@ -27,7 +27,7 @@ namespace nebula {
         } else if (strcmp(key, "y") == 0) {
             pos->y = (float)luaL_checknumber(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Position.%s", key);
         }
 
         return 0;
@@ -37,6 +37,11 @@ namespace nebula {
         Position* pos = (Position*)luaL_checkudata(L, 1, "Position");
         lua_pushfstring(L, "Position(%f, %f)", pos->x, pos->y);
         return 1;
+    }
+
+    static int w_positionGc(lua_State *L) {
+        Position *color = (Position*)luaL_checkudata(L, 1, "Position");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -53,6 +58,7 @@ namespace nebula {
         {"__index", w_positionIndex},
         {"__newindex", w_positionNewIndex},
         {"__tostring", w_positionToString},
+        {"__gc", w_positionGc},
         {0, 0}
     };
 

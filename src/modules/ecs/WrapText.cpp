@@ -31,7 +31,7 @@ namespace nebula {
             std::string s = luaL_checkstring(L, 3);
             text->value = s;
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Text.%s", key);
         }
 
         return 0;
@@ -41,6 +41,11 @@ namespace nebula {
         Text* text = (Text*)luaL_checkudata(L, 1, "Text");
         lua_pushfstring(L, "Text(value: %s)", text->value.c_str());
         return 1;
+    }
+
+    static int w_textGc(lua_State *L) {
+        Text *color = (Text*)luaL_checkudata(L, 1, "Text");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -57,6 +62,7 @@ namespace nebula {
         {"__index", w_textIndex},
         {"__newindex", w_textNewIndex},
         {"__tostring", w_textToString},
+        {"__gc", w_textGc},
         {0, 0}
     };
 

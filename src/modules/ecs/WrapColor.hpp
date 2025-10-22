@@ -29,7 +29,7 @@ namespace nebula {
                 } else if (strcmp(keyName, "a") == 0) {
                     color->a = (float)luaL_checknumber(L, -1);
                 } else {
-                    luaL_error(L, "Invalid field: %s", keyName);
+                    luaL_error(L, "Invalid field: Color.%s", keyName);
                 }
 
                 lua_pop(L, 1); // pops value

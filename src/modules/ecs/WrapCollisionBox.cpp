@@ -35,7 +35,7 @@ namespace nebula {
         } else if (strcmp(key, "y") == 0) {
             collisionBox->y = (float)luaL_checknumber(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: CollisionBox.%s", key);
         }
 
         return 0;
@@ -45,6 +45,11 @@ namespace nebula {
         CollisionBox* collisionBox = (CollisionBox*)luaL_checkudata(L, 1, "CollisionBox");
         lua_pushfstring(L, "CollisionBox(w: %f, h: %f, x: %f, y: %f)", collisionBox->width, collisionBox->height, collisionBox->x, collisionBox->y);
         return 1;
+    }
+
+    static int w_collisionBoxGc(lua_State *L) {
+        CollisionBox *color = (CollisionBox*)luaL_checkudata(L, 1, "CollisionBox");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -61,6 +66,7 @@ namespace nebula {
         {"__index", w_collisionBoxIndex},
         {"__newindex", w_collisionBoxNewIndex},
         {"__tostring", w_collisionBoxToString},
+        {"__gc", w_collisionBoxGc},
         {0, 0}
     };
 

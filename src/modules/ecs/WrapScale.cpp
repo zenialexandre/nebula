@@ -27,7 +27,7 @@ namespace nebula {
         } else if (strcmp(key, "y") == 0) {
             scale->y = (float)luaL_checknumber(L, 3);
         } else {
-            luaL_error(L, "Invalid field: %s", key);
+            luaL_error(L, "Invalid field: Scale.%s", key);
         }
 
         return 0;
@@ -37,6 +37,11 @@ namespace nebula {
         Scale* scale = (Scale*)luaL_checkudata(L, 1, "Scale");
         lua_pushfstring(L, "Scale(%f, %f)", scale->x, scale->y);
         return 1;
+    }
+
+    static int w_scaleGc(lua_State *L) {
+        Scale *color = (Scale*)luaL_checkudata(L, 1, "Scale");
+        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -53,6 +58,7 @@ namespace nebula {
         {"__index", w_scaleIndex},
         {"__newindex", w_scaleNewIndex},
         {"__tostring", w_scaleToString},
+        {"__gc", w_scaleGc},
         {0, 0}
     };
 

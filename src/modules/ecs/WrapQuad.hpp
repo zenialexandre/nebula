@@ -23,7 +23,7 @@ namespace nebula {
                 } else if (strcmp(keyName, "height") == 0) {
                     quad->height = (float)luaL_checknumber(L, -1);
                 } else {
-                    luaL_error(L, "Invalid field: %s", keyName);
+                    luaL_error(L, "Invalid field: Quad.%s", keyName);
                 }
 
                 lua_pop(L, 1); // pops value
