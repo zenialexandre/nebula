@@ -180,7 +180,6 @@ namespace nebula {
         int argTableFieldCount = getNumOfTableFields(L, 2);
 
         if (argTableFieldCount != baseFieldCount) {
-            std::cout << "argTableFieldCount: " << argTableFieldCount << " baseFieldCount: " << baseFieldCount << std::endl;
             lua_pushstring(L, componentName);
             luaL_error(
                 L, 
@@ -383,8 +382,6 @@ namespace nebula {
             lua_pushstring(L, metadataName);
             luaL_error(L, "The Component %s does not exists anymore");
         }
-
-        std::cout << "[C++] ent: " << entId << " | metadataId: " << metadataId << " | metadataName: " << metadataName << " | safeComponentId: " << safeComponentId << std::endl;
 
         if (safeComponentId == POSITION) {
             return getNebulaComponent<Position>(L, entId, safeComponentId, metadataName);
