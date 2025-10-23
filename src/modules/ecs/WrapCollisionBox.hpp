@@ -2,7 +2,7 @@
 
 #include "../common/WrapType.hpp"
 #include "../common/LuaBidings.hpp"
-#include "RenderComponents.hpp"
+#include "Components.hpp"
 
 #include <cstring>
 
@@ -10,7 +10,9 @@ namespace nebula {
     namespace ecs {
     
     static int collisionBoxConstructor(lua_State *L, const bool emptyConstructor) {
-        CollisionBox *collisionBox = (CollisionBox*)lua_newuserdata(L, sizeof(CollisionBox));
+        CollisionBox *collisionBox = new CollisionBox();
+        ComponentProxy *proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
+        proxy->pointer = collisionBox;
         collisionBox->width = 0.0f;
         collisionBox->height = 0.0f;
         collisionBox->x = 0.0f;

@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_scaleIndex(lua_State *L) {
-        Scale *scale = (Scale*)luaL_checkudata(L, 1, "Scale");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Scale");
+        Scale *scale = (Scale*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "x") == 0) {
@@ -19,7 +20,8 @@ namespace nebula {
     }
 
     int w_scaleNewIndex(lua_State *L) {
-        Scale *scale = (Scale*)luaL_checkudata(L, 1, "Scale");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Scale");
+        Scale *scale = (Scale*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "x") == 0) {
@@ -34,14 +36,10 @@ namespace nebula {
     }
 
     static int w_scaleToString(lua_State* L) {
-        Scale* scale = (Scale*)luaL_checkudata(L, 1, "Scale");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Scale");
+        Scale *scale = (Scale*) proxy->pointer;
         lua_pushfstring(L, "Scale(%f, %f)", scale->x, scale->y);
         return 1;
-    }
-
-    static int w_scaleGc(lua_State *L) {
-        Scale *color = (Scale*)luaL_checkudata(L, 1, "Scale");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -58,7 +56,6 @@ namespace nebula {
         {"__index", w_scaleIndex},
         {"__newindex", w_scaleNewIndex},
         {"__tostring", w_scaleToString},
-        {"__gc", w_scaleGc},
         {0, 0}
     };
 

@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_positionIndex(lua_State *L) {
-        Position *pos = (Position*)luaL_checkudata(L, 1, "Position");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Position");
+        Position *pos = (Position*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "x") == 0) {
@@ -19,7 +20,8 @@ namespace nebula {
     }
 
     int w_positionNewIndex(lua_State *L) {
-        Position *pos = (Position*)luaL_checkudata(L, 1, "Position");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Position");
+        Position *pos = (Position*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "x") == 0) {
@@ -34,14 +36,10 @@ namespace nebula {
     }
 
     static int w_positionToString(lua_State* L) {
-        Position* pos = (Position*)luaL_checkudata(L, 1, "Position");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Position");
+        Position *pos = (Position*) proxy->pointer;
         lua_pushfstring(L, "Position(%f, %f)", pos->x, pos->y);
         return 1;
-    }
-
-    static int w_positionGc(lua_State *L) {
-        Position *color = (Position*)luaL_checkudata(L, 1, "Position");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -58,7 +56,6 @@ namespace nebula {
         {"__index", w_positionIndex},
         {"__newindex", w_positionNewIndex},
         {"__tostring", w_positionToString},
-        {"__gc", w_positionGc},
         {0, 0}
     };
 

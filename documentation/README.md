@@ -21,3 +21,7 @@ Check the [tutorial](https://github.com/maumafra/nebula/tree/main/documentation/
 ### Pong
 Simple Pong game using only Position, Quad and CollisionBox components. [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/pong)
 <img width="808" height="636" alt="image" src="https://github.com/user-attachments/assets/ad02fe69-962e-46e1-80c2-b1bcb12f5d5a" />
+
+### Pong 2
+An improvement on the previous Pong game, adding Sprites, Text and Score. [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/pong-2)
+<img width="808" height="636" alt="image" src="" />

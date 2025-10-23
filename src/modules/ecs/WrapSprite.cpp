@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_spriteIndex(lua_State *L) {
-        Sprite *sprite = (Sprite*)luaL_checkudata(L, 1, "Sprite");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Sprite");
+        Sprite *sprite = (Sprite*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "texture") == 0) {
@@ -17,7 +18,8 @@ namespace nebula {
     }
 
     int w_spriteNewIndex(lua_State *L) {
-        Sprite *sprite = (Sprite*)luaL_checkudata(L, 1, "Sprite");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Sprite");
+        Sprite *sprite = (Sprite*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "texture") == 0) {
@@ -33,14 +35,10 @@ namespace nebula {
     }
 
     static int w_spriteToString(lua_State* L) {
-        Sprite* sprite = (Sprite*)luaL_checkudata(L, 1, "Sprite");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Sprite");
+        Sprite *sprite = (Sprite*) proxy->pointer;
         lua_pushfstring(L, "Sprite");
         return 1;
-    }
-
-    static int w_spriteGc(lua_State *L) {
-        Sprite *color = (Sprite*)luaL_checkudata(L, 1, "Sprite");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -57,7 +55,6 @@ namespace nebula {
         {"__index", w_spriteIndex},
         {"__newindex", w_spriteNewIndex},
         {"__tostring", w_spriteToString},
-        {"__gc", w_spriteGc},
         {0, 0}
     };
 

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Definitions.hpp"
+
 #include "../Graphics/Texture.h"
 #include "../Graphics/Font.hpp"
 
@@ -37,4 +39,9 @@ struct Rotation {
 struct CollisionBox {
     float width, height;
     float x, y;
+};
+
+// lua proxy for components
+struct ComponentProxy {
+    void *pointer;
 };

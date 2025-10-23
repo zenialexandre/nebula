@@ -73,7 +73,7 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/WrapRotation.cpp
     src/modules/ecs/WrapCollisionBox.hpp
     src/modules/ecs/WrapCollisionBox.cpp
-    src/modules/ecs/RenderComponents.hpp
+    src/modules/ecs/Components.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC
     nebula_common

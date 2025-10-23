@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "../Ecs/World.hpp"
-#include "../Ecs/RenderComponents.hpp"
+#include "../Ecs/Components.hpp"
 #include "Camera.h"
 #include "Shader.h"
 #include "Texture.h"

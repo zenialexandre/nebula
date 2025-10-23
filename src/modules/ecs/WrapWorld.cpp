@@ -301,7 +301,12 @@ namespace nebula {
 
     template <typename T>
     static int addNebulaComponent(lua_State *L, const EntityId entId, const int cTabIdx, const ComponentId safeComponentId, const char *metadataName) {
-        T *pointer = (T*)luaL_checkudata(L, cTabIdx, metadataName);
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, cTabIdx, metadataName);
+        if(proxy == nullptr) {
+            lua_pushstring(L, metadataName);
+            luaL_error(L, "Pointer to %s is a null pointer.");
+        }
+        T *pointer = (T*) proxy->pointer;
         if(pointer == nullptr) {
             lua_pushstring(L, metadataName);
             luaL_error(L, "Pointer to %s is a null pointer.");
@@ -358,12 +363,11 @@ namespace nebula {
             luaL_error(L, "The Component %s for Entity %i not found.");
         }
 
-        lua_pushlightuserdata(L, pointer);
+        ComponentProxy* proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
+        proxy->pointer = pointer;
         luaL_getmetatable(L, metadataName);
         lua_setmetatable(L, -2);
 
-        void* pushedPtr = lua_touserdata(L, -1);
-        std::cout << "[DEBUG] Pushed pointer: " << pushedPtr << std::endl;
         return 1;
     }
 

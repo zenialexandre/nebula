@@ -2,7 +2,7 @@
 
 #include "../common/WrapType.hpp"
 #include "../common/LuaBidings.hpp"
-#include "RenderComponents.hpp"
+#include "Components.hpp"
 
 #include <cstring>
 
@@ -10,7 +10,9 @@ namespace nebula {
     namespace ecs {
     
     static int rotationConstructor(lua_State *L, const bool emptyConstructor) {
-        Rotation *rotation = (Rotation*)lua_newuserdata(L, sizeof(Rotation));
+        Rotation *rotation = new Rotation();
+        ComponentProxy *proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
+        proxy->pointer = rotation;
         rotation->value = 0.0f;
         if (!emptyConstructor) {
             lua_pushnil(L); // first key

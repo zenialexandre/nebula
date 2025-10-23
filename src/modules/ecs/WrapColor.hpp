@@ -2,7 +2,7 @@
 
 #include "../common/WrapType.hpp"
 #include "../common/LuaBidings.hpp"
-#include "RenderComponents.hpp"
+#include "Components.hpp"
 
 #include <cstring>
 
@@ -10,7 +10,9 @@ namespace nebula {
     namespace ecs {
     
     static int colorConstructor(lua_State *L, const bool emptyConstructor) {
-        Color *color = (Color*)lua_newuserdata(L, sizeof(Color));
+        Color *color = new Color();
+        ComponentProxy *proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
+        proxy->pointer = color;
         color->r = 1.0f;
         color->g = 1.0f;
         color->b = 1.0f;

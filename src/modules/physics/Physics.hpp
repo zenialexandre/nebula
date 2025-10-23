@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../common/Module.hpp"
-#include "../ecs/RenderComponents.hpp"
+#include "../ecs/Components.hpp"
 #include "../ecs/World.hpp"
 
 #include <glm/glm.hpp>

@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_colorIndex(lua_State *L) {
-        Color *color = (Color*)luaL_checkudata(L, 1, "Color");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Color");
+        Color *color = (Color*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "r") == 0) {
@@ -23,7 +24,8 @@ namespace nebula {
     }
 
     int w_colorNewIndex(lua_State *L) {
-        Color *color = (Color*)luaL_checkudata(L, 1, "Color");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Color");
+        Color *color = (Color*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "r") == 0) {
@@ -42,14 +44,10 @@ namespace nebula {
     }
 
     static int w_colorToString(lua_State* L) {
-        Color* color = (Color*)luaL_checkudata(L, 1, "Color");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Color");
+        Color *color = (Color*) proxy->pointer;
         lua_pushfstring(L, "Color(r: %f, g: %f, b: %f, a: %f)", color->r, color->g, color->b, color->a);
         return 1;
-    }
-
-    static int w_colorGc(lua_State *L) {
-        Color *color = (Color*)luaL_checkudata(L, 1, "Color");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -66,7 +64,6 @@ namespace nebula {
         {"__index", w_colorIndex},
         {"__newindex", w_colorNewIndex},
         {"__tostring", w_colorToString},
-        {"__gc", w_colorGc},
         {0, 0}
     };
 

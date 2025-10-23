@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_collisionBoxIndex(lua_State *L) {
-        CollisionBox *collisionBox = (CollisionBox*)luaL_checkudata(L, 1, "CollisionBox");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "CollisionBox");
+        CollisionBox *collisionBox = (CollisionBox*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "width") == 0) {
@@ -23,7 +24,8 @@ namespace nebula {
     }
 
     int w_collisionBoxNewIndex(lua_State *L) {
-        CollisionBox *collisionBox = (CollisionBox*)luaL_checkudata(L, 1, "CollisionBox");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "CollisionBox");
+        CollisionBox *collisionBox = (CollisionBox*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "width") == 0) {
@@ -42,14 +44,10 @@ namespace nebula {
     }
 
     static int w_collisionBoxToString(lua_State* L) {
-        CollisionBox* collisionBox = (CollisionBox*)luaL_checkudata(L, 1, "CollisionBox");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "CollisionBox");
+        CollisionBox *collisionBox = (CollisionBox*) proxy->pointer;
         lua_pushfstring(L, "CollisionBox(w: %f, h: %f, x: %f, y: %f)", collisionBox->width, collisionBox->height, collisionBox->x, collisionBox->y);
         return 1;
-    }
-
-    static int w_collisionBoxGc(lua_State *L) {
-        CollisionBox *color = (CollisionBox*)luaL_checkudata(L, 1, "CollisionBox");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -66,7 +64,6 @@ namespace nebula {
         {"__index", w_collisionBoxIndex},
         {"__newindex", w_collisionBoxNewIndex},
         {"__tostring", w_collisionBoxToString},
-        {"__gc", w_collisionBoxGc},
         {0, 0}
     };
 

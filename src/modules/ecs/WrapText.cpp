@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_textIndex(lua_State *L) {
-        Text *text = (Text*)luaL_checkudata(L, 1, "Text");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Text");
+        Text *text = (Text*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "font") == 0) {
@@ -19,7 +20,8 @@ namespace nebula {
     }
 
     int w_textNewIndex(lua_State *L) {
-        Text *text = (Text*)luaL_checkudata(L, 1, "Text");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Text");
+        Text *text = (Text*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "font") == 0) {
@@ -38,14 +40,10 @@ namespace nebula {
     }
 
     static int w_textToString(lua_State* L) {
-        Text* text = (Text*)luaL_checkudata(L, 1, "Text");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Text");
+        Text *text = (Text*) proxy->pointer;
         lua_pushfstring(L, "Text(value: %s)", text->value.c_str());
         return 1;
-    }
-
-    static int w_textGc(lua_State *L) {
-        Text *color = (Text*)luaL_checkudata(L, 1, "Text");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -62,7 +60,6 @@ namespace nebula {
         {"__index", w_textIndex},
         {"__newindex", w_textNewIndex},
         {"__tostring", w_textToString},
-        {"__gc", w_textGc},
         {0, 0}
     };
 

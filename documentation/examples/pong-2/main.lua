@@ -157,13 +157,10 @@ function nebula.update(dt)
     end
     if ballPos.x > winWidth then
         local p1Score = nebula.ecs.getComponent(pong1, Score)
-        local score1Text = nebula.ecs.getComponent(scoreP1, Color)
-        local a = nebula.ecs.getComponent(ball, Position)
+        local score1Text = nebula.ecs.getComponent(scoreP1, Text)
 
         p1Score.value = p1Score.value + 1
-        print(getmetatable(ballPos))
-        --score1Text.value = tostring(p1Score.value)
-        print(getmetatable(score1Text))
+        score1Text.value = tostring(p1Score.value)
 
         ballPos.x = winWidth / 2
         ballPos.y =  winHeight / 2

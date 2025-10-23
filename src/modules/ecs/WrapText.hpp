@@ -3,7 +3,7 @@
 #include "../common/WrapType.hpp"
 #include "../common/LuaBidings.hpp"
 #include "../Graphics/Font.hpp"
-#include "RenderComponents.hpp"
+#include "Components.hpp"
 
 #include <cstring>
 
@@ -11,7 +11,9 @@ namespace nebula {
     namespace ecs {
     
     static int textConstructor(lua_State *L, const bool emptyConstructor) {
-        Text *text = (Text*)lua_newuserdata(L, sizeof(Text));
+        Text *text = new Text();
+        ComponentProxy *proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
+        proxy->pointer = text;
         new (&text->value) std::string(); // initializing text->value
         text->font = nullptr;
         if (emptyConstructor) {

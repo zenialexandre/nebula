@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_quadIndex(lua_State *L) {
-        Quad *quad = (Quad*)luaL_checkudata(L, 1, "Quad");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Quad");
+        Quad *quad = (Quad*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "width") == 0) {
@@ -19,7 +20,8 @@ namespace nebula {
     }
 
     int w_quadNewIndex(lua_State *L) {
-        Quad *quad = (Quad*)luaL_checkudata(L, 1, "Quad");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Quad");
+        Quad *quad = (Quad*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "width") == 0) {
@@ -34,14 +36,10 @@ namespace nebula {
     }
 
     static int w_quadToString(lua_State* L) {
-        Quad* quad = (Quad*)luaL_checkudata(L, 1, "Quad");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Quad");
+        Quad *quad = (Quad*) proxy->pointer;
         lua_pushfstring(L, "Quad(w: %f, h: %f)", quad->width, quad->height);
         return 1;
-    }
-
-    static int w_quadGc(lua_State *L) {
-        Quad *color = (Quad*)luaL_checkudata(L, 1, "Quad");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -58,7 +56,6 @@ namespace nebula {
         {"__index", w_quadIndex},
         {"__newindex", w_quadNewIndex},
         {"__tostring", w_quadToString},
-        {"__gc", w_quadGc},
         {0, 0}
     };
 

@@ -3,7 +3,7 @@
 #include "../common/WrapType.hpp"
 #include "../common/LuaBidings.hpp"
 #include "../Graphics/Texture.h"
-#include "RenderComponents.hpp"
+#include "Components.hpp"
 
 #include <cstring>
 
@@ -11,7 +11,9 @@ namespace nebula {
     namespace ecs {
     
     static int spriteConstructor(lua_State *L, const bool emptyConstructor) {
-        Sprite *sprite = (Sprite*)lua_newuserdata(L, sizeof(Sprite));
+        Sprite *sprite = new Sprite();
+        ComponentProxy *proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
+        proxy->pointer = sprite;
         if (emptyConstructor) {
             luaL_error(L, "You cannot initialize a Sprite Component with no arguments.");
         }

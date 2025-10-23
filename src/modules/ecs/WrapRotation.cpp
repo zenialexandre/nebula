@@ -4,7 +4,8 @@ namespace nebula {
     namespace ecs {
 
     int w_rotationIndex(lua_State *L) {
-        Rotation *rotation = (Rotation*)luaL_checkudata(L, 1, "Rotation");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Rotation");
+        Rotation *rotation = (Rotation*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "value") == 0) {
@@ -17,7 +18,8 @@ namespace nebula {
     }
 
     int w_rotationNewIndex(lua_State *L) {
-        Rotation *rotation = (Rotation*)luaL_checkudata(L, 1, "Rotation");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Rotation");
+        Rotation *rotation = (Rotation*) proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "value") == 0) {
@@ -30,14 +32,10 @@ namespace nebula {
     }
 
     static int w_rotationToString(lua_State* L) {
-        Rotation* rotation = (Rotation*)luaL_checkudata(L, 1, "Rotation");
+        ComponentProxy *proxy = (ComponentProxy*)luaL_checkudata(L, 1, "Rotation");
+        Rotation *rotation = (Rotation*) proxy->pointer;
         lua_pushfstring(L, "Rotation(%f)", rotation->value);
         return 1;
-    }
-
-    static int w_rotationGc(lua_State *L) {
-        Rotation *color = (Rotation*)luaL_checkudata(L, 1, "Rotation");
-        return 0;
     }
 
     static int w_compName(lua_State *L) {
@@ -54,7 +52,6 @@ namespace nebula {
         {"__index", w_rotationIndex},
         {"__newindex", w_rotationNewIndex},
         {"__tostring", w_rotationToString},
-        {"__gc", w_rotationGc},
         {0, 0}
     };
 
