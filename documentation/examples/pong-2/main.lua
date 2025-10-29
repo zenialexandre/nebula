@@ -19,6 +19,11 @@ function nebula.setup()
 
     maruFont = nebula.graphics.newFont("resources/fonts/MaruMonica.ttf", 100)
 
+    pongHit = nebula.audio.newSource("resources/effects/pongHitByNoiseCollector.wav")
+    music = nebula.audio.newSource("resources/music/music.wav")
+
+    nebula.audio.setVolume(0.2)
+
     pong1 = nebula.ecs.spawn()
     pong2 = nebula.ecs.spawn()
 
@@ -30,6 +35,7 @@ function nebula.setup()
     scoreP1 = nebula.ecs.spawn()
     scoreP2 = nebula.ecs.spawn()
 
+    nebula.audio.play(music, true)
 
     winWidth, winHeight = nebula.window.getSize()
 
@@ -87,7 +93,6 @@ function nebula.setup()
         Color({r = 0.37, g = 0.80, b = 0.89})
     )
 
-    nebula.window.setTitle("pong")
     nebula.window.setIcon("resources/sprites/ball.png")
 end
 
@@ -134,12 +139,20 @@ function nebula.update(dt)
             ballSpeed.y = - ballSpeed.y
         end
         ballSpeed.x = - ballSpeed.x
+
+        if (not nebula.audio.isPlaying(pongHit)) then
+            nebula.audio.play(pongHit, false)
+        end
     end
     if nebula.physics.checkCollision(ball, pong2) then
         if ballPos.x > winWidth - 20 then
             ballSpeed.y = - ballSpeed.y
         end
         ballSpeed.x = - ballSpeed.x
+
+        if (not nebula.audio.isPlaying(pongHit)) then
+            nebula.audio.play(pongHit, false)
+        end
     end
 
     ballPos.x = ballPos.x + (ballSpeed.x * dt)
@@ -165,6 +178,8 @@ function nebula.update(dt)
         ballPos.x = winWidth / 2
         ballPos.y =  winHeight / 2
     end
+
+    nebula.window.setTitle("pong 2! fps: "..tostring(nebula.time.getFPS()))
 end
 
 function nebula.draw()

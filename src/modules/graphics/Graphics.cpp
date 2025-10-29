@@ -21,7 +21,6 @@ Graphics::Graphics(int width, int height)
 }
 
 Graphics::~Graphics() {
-    std::cout << "DELETE GRAPHICS" << "\n";
     delete renderer;
     delete defaultCamera;
     delete defaultShader;

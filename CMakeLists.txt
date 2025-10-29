@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.26)
 
+# Build in debug mode: 
+# cmake -B build
+# cmake --build build
+
 # Build in release mode: 
 # cmake -B release -DCMAKE_BUILD_TYPE=Release
 # cmake --build build --config Release
@@ -124,6 +128,17 @@ target_link_libraries(nebula_window PUBLIC
     nebula_graphics
 )
 
+add_library(nebula_audio STATIC
+    src/modules/audio/Audio.cpp
+    src/modules/audio/Audio.hpp
+    src/modules/audio/WrapAudio.cpp
+    src/modules/audio/WrapAudio.hpp
+)
+target_link_libraries(nebula_audio PUBLIC 
+    SDL3::SDL3
+    nebula_common
+)
+
 add_library(nebula_data STATIC
     src/modules/data/ImageFile.cpp
     src/modules/data/ImageFile.h
@@ -196,6 +211,7 @@ target_link_libraries(nebula_scripts PUBLIC
     nebula_keyboard
     nebula_mouse
     nebula_physics
+    nebula_audio
 )
 target_include_directories(nebula_scripts PUBLIC
     src/modules/scripts/boot.lua
@@ -212,6 +228,7 @@ set(NEBULA_MODULES
     nebula_event
     nebula_scripts
     nebula_keyboard
+    nebula_audio
 )
 
 set(NEBULA_LIBRARIES
@@ -234,12 +251,30 @@ add_subdirectory(libs/SDL3)
 add_subdirectory(libs/lua-5.4.8)
 add_subdirectory(libs/freetype-2.14.1)
 
-#add_executable(nebula_console)
-#target_sources(nebula_console PRIVATE src/nebula.cpp)
-#target_link_libraries(nebula_console ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
+add_executable(nebula_console)
+target_sources(nebula_console PRIVATE src/nebula.cpp)
+target_link_libraries(nebula_console ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
 
-#add_executable(nebula WIN32)
 add_executable(nebula)
 target_sources(nebula PRIVATE src/nebula.cpp)
 target_link_libraries(nebula ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
 #target_include_directories(nebula PRIVATE libs/glad/include/)
+
+if (WIN32)
+    foreach(config_type IN ITEMS Release MinSizeRel RelWithDebInfo)
+        if (CMAKE_GENERATOR MATCHES "Visual Studio" OR CMAKE_CONFIGURATION_TYPES)
+            target_link_options(nebula PRIVATE
+                $<$<CONFIG:${config_type}>:/SUBSYSTEM:WINDOWS>
+                $<$<CONFIG:${config_type}>:/ENTRY:mainCRTStartup>
+            )
+        else()
+            if (CMAKE_BUILD_TYPE STREQUAL ${config_type})
+                if (MSVC)
+                    target_link_options(nebula PRIVATE "/SUBSYSTEM:WINDOWS" "/ENTRY:mainCRTStartup")
+                else()
+                    target_link_options(nebula PRIVATE "-mwindows")
+                endif()
+            endif()
+        endif()
+    endforeach()
+endif()

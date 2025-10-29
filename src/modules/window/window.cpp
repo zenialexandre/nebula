@@ -9,7 +9,7 @@ Window::Window()
         , window(nullptr)
         , glContext(nullptr) {
     
-    if(!SDL_InitSubSystem(SDL_INIT_VIDEO)) {
+    if(!SDL_InitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO)) {
         //TODO: throw Exception
         SDL_Log("%s", "ERROR::SDL::INITIALIZE::VIDEO");
     }
@@ -29,7 +29,7 @@ void Window::close() {
     SDL_GL_DestroyContext(glContext);
     SDL_DestroyWindow(window);
     SDL_FlushEvents(SDL_EVENT_WINDOW_FIRST, SDL_EVENT_WINDOW_LAST);
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    SDL_QuitSubSystem(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
 }
 
 bool Window::createWindow(int width, int height) {

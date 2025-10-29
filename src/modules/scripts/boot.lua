@@ -6,13 +6,65 @@ function printError(msg, layer)
     print((debug.traceback("[LUA] Error: " .. tostring(msg), 1+(layer or 1))))
 end
 
+local function isAbsolute(path)
+    if path:match("^%a:[/\\]") then return true end
+    if path:sub(1, 1) == "/" then return true end
+    return false
+end
+
+local function joinPath(base, rel)
+    if base:sub(-1) ~= "/" and base:sub(-1) ~= "\\" then
+        base = base .. "/"
+    end
+    return (base .. rel):gsub("\\", "/")
+end
+
+local function safeRequire(path)
+    local ok, err = pcall(function()
+        local clean = path:gsub("\\", "/"):gsub("%.lua$", "")
+        local absPath = clean
+
+        if not isAbsolute(clean) and _nebulaArgs and _nebulaArgs._exePath then
+            local exeDir = _nebulaArgs._exePath:gsub("[^/\\]+$", "")
+            absPath = joinPath(exeDir, clean)
+        end
+
+        local luaFile = absPath .. ".lua"
+        local chunk, loadErr = loadfile(luaFile)
+        if not chunk then
+            error("Could not load file: " .. luaFile .. " [" .. tostring(loadErr) .. "]")
+        end
+        return chunk()
+    end)
+
+    if not ok then
+        printError(err)
+    end
+    return ok
+end
+
 function nebula.boot()
     if (_nebulaArgs ~= nil) then
         if (_nebulaArgs["_gamePath"] ~= nil) then
-            require(_nebulaArgs._gamePath:gsub("%.lua$", ""))
+            local gamePath = _nebulaArgs._gamePath
+            if safeRequire(gamePath) then
+                local gameDir = gamePath:gsub("\\", "/"):gsub("[^/]+$", "")
+                if not isAbsolute(gameDir) and _nebulaArgs and _nebulaArgs._exePath then
+                    local exeDir = _nebulaArgs._exePath:gsub("[^/\\]+$", "")
+                    gameDir = joinPath(exeDir, gameDir)
+                end
+
+                if gameDir:sub(-1) ~= "/" then gameDir = gameDir .. "/" end
+
+                package.path = gameDir .. "?.lua;" .. gameDir .. "?/init.lua;" .. package.path
+            else
+                require("nebula.baseScreen")
+            end
         else
             require("nebula.baseScreen")
         end
+    else
+        require("nebula.baseScreen")
     end
 
     require("nebula.time")
@@ -23,6 +75,7 @@ function nebula.boot()
     require("nebula.keyboard")
     require("nebula.mouse")
     require("nebula.physics")
+    require("nebula.audio")
 end
 
 function nebula.error()

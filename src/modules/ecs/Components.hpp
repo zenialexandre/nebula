@@ -42,6 +42,19 @@ struct CollisionBox {
 };
 
 // lua proxy for components
+//struct ComponentProxy {
+//    void *pointer;
+//};
+
 struct ComponentProxy {
+    nebula::ecs::EntityId entity;
+    nebula::ecs::ComponentId id;
     void *pointer;
 };
+
+//template <typename T>
+//T* ensureProxyComponent(ComponentProxy *proxy) {
+//    if (proxy == nullptr) {
+//        return nullptr;
+//    }
+//}

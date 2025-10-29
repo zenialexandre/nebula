@@ -305,6 +305,8 @@ namespace nebula {
             lua_pushstring(L, metadataName);
             luaL_error(L, "Pointer to %s is a null pointer.");
         }
+        proxy->entity = entId;
+        proxy->id = safeComponentId;
         T *pointer = (T*) proxy->pointer;
         if(pointer == nullptr) {
             lua_pushstring(L, metadataName);
@@ -364,6 +366,8 @@ namespace nebula {
 
         ComponentProxy* proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
         proxy->pointer = pointer;
+        proxy->id = safeComponentId;
+        proxy->entity = entId;
         luaL_getmetatable(L, metadataName);
         lua_setmetatable(L, -2);
 

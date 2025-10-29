@@ -11,6 +11,7 @@ extern "C" {
     extern int nlua_keyboard(lua_State *L);
     extern int nlua_mouse(lua_State *L);
     extern int nlua_physics(lua_State *L);
+    extern int nlua_audio(lua_State *L);
 }
 
 static const char bootLua[] =
@@ -32,6 +33,7 @@ static const luaL_Reg modules[] = {
     {"nebula.keyboard", nlua_keyboard},
     {"nebula.mouse", nlua_mouse},
     {"nebula.physics", nlua_physics},
+    {"nebula.audio", nlua_audio},
     // lua files
     {"nebula.boot", nlua_nebula_boot},
     {"nebula.baseScreen", nlua_nebula_baseScreen},

@@ -8,6 +8,7 @@
 #include <Keyboard/WrapKeyboard.hpp>
 #include <Mouse/WrapMouse.hpp>
 #include <Physics/WrapPhysics.hpp>
+#include <Audio/WrapAudio.hpp>
 
 extern "C" {
     #include <lua.h>
@@ -34,6 +35,7 @@ namespace nebula {
         window->createWindow();
         
         graphics::Graphics *graphics = new graphics::Graphics(window->getWidth(), window->getHeight());
+        audio::Audio *audio = new audio::Audio();
 
         time::Time *time = new time::Time();
         event::Event *event = new event::Event();
