@@ -5,7 +5,7 @@ Nebula is an ECS 2D Game Engine written in C++ with a Lua API. Nebula is heavily
 Please check the [documentation](https://github.com/maumafra/nebula/tree/main/documentation) page.
 
 ## Download
-Check the latest verions at [Releases](https://github.com/maumafra/nebula/releases)
+Check the latest verions at [Releases](https://github.com/maumafra/nebula/releases).
 
 ## Architecture
 <img width="645" height="684" alt="image" src="https://github.com/user-attachments/assets/83d7e2bf-efcd-4e98-8044-fd3415808f12" />
