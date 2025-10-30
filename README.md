@@ -7,6 +7,19 @@ Please check the [documentation](https://github.com/maumafra/nebula/tree/main/do
 ## Download
 Check the latest verions at [Releases](https://github.com/maumafra/nebula/releases).
 
+## VSCode Extension
+Nebula has it's own VSCode Extension!  
+<img>
+
+Make sure to configure the extension before using:  
+<img>
+
+**Notes:** While developing your game, you can point the executable path to the **nebula_console.exe**, as it will print the game output in the VSCode Terminal.  
+
+With everything set, a green button should appear in your main.lua file:
+<img>
+
+
 ## Building the Game Engine Code
 If there is a download option for your platform on [Download](https://github.com/maumafra/nebula/releases), you can skip this section.  
 
