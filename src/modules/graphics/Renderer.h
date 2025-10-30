@@ -4,8 +4,8 @@
 #include <array>
 #include <iostream>
 
-#include "../Ecs/World.hpp"
-#include "../Ecs/Components.hpp"
+#include "../ecs/World.hpp"
+#include "../ecs/Components.hpp"
 #include "Camera.h"
 #include "Shader.h"
 #include "Texture.h"

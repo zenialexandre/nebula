@@ -3,8 +3,8 @@
 #include <glad/glad.h>
 #include <SDL3/SDL.h>
 
-#include "../Ecs/World.hpp"
-#include "../Common/Module.hpp"
+#include "../ecs/World.hpp"
+#include "../common/Module.hpp"
 #include "Shader.h"
 #include "Camera.h"
 #include "Renderer.h"

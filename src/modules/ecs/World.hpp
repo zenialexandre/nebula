@@ -3,7 +3,7 @@
 #include <unordered_map>
 #include <iostream>
 
-#include "../Common/Module.hpp"
+#include "../common/Module.hpp"
 #include "Table.hpp"
 #include "Type.hpp"
 #include "IdStorage.hpp"

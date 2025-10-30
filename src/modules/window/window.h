@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../Common/Module.hpp"
+#include "../common/Module.hpp"
 
 #include "data/ImageFile.h"
 

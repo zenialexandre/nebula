@@ -4,8 +4,8 @@
 
 #include "Definitions.hpp"
 
-#include "../Graphics/Texture.h"
-#include "../Graphics/Font.hpp"
+#include "../graphics/Texture.h"
+#include "../graphics/Font.hpp"
 
 struct Position {
     float x, y;

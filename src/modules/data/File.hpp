@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <string>
 #include <iostream>
+#include <algorithm>
 
 namespace nebula {
     namespace data {

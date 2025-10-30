@@ -5,7 +5,7 @@
 #include "../common/Module.hpp"
 #include "../keyboard/Keyboard.hpp"
 #include "../graphics/Graphics.h"
-#include "../window/window.h"
+#include "../window/Window.h"
 
 #include <string>
 

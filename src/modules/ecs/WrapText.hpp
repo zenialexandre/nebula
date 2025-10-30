@@ -2,7 +2,7 @@
 
 #include "../common/WrapType.hpp"
 #include "../common/LuaBidings.hpp"
-#include "../Graphics/Font.hpp"
+#include "../graphics/Font.hpp"
 #include "Components.hpp"
 
 #include <cstring>
