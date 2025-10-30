@@ -12,6 +12,7 @@
 |**[nebula.mouse](https://github.com/maumafra/nebula/tree/main/documentation/modules/mouse)**| Mouse Module
 |**[nebula.physics](https://github.com/maumafra/nebula/tree/main/documentation/modules/physics)**| Physics Module
 |**[nebula.time](https://github.com/maumafra/nebula/tree/main/documentation/modules/time)**| Time Module
+|**[nebula.window](https://github.com/maumafra/nebula/tree/main/documentation/modules/window)**| Window Module
 
 ## Tutorial
 
