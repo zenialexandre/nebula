@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include <Scripts/NebulaSetup.hpp>
-#include <Data/File.hpp>
+#include "../Scripts/NebulaSetup.hpp"
+#include "../Data/File.hpp"
 
 extern "C" {
     #include <lua.h>
