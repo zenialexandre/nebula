@@ -1,14 +1,14 @@
 #pragma once
 
-#include <Graphics/Graphics.h>
-#include <Window/Window.h>
-#include <Time/WrapTime.hpp>
-#include <Ecs/WrapWorld.hpp>
-#include <Event/WrapEvent.hpp>
-#include <Keyboard/WrapKeyboard.hpp>
-#include <Mouse/WrapMouse.hpp>
-#include <Physics/WrapPhysics.hpp>
-#include <Audio/WrapAudio.hpp>
+#include "../graphics/Graphics.h"
+#include "../window/Window.h"
+#include "../time/WrapTime.hpp"
+#include "../ecs/WrapWorld.hpp"
+#include "../event/WrapEvent.hpp"
+#include "../keyboard/WrapKeyboard.hpp"
+#include "../mouse/WrapMouse.hpp"
+#include "../physics/WrapPhysics.hpp"
+#include "../audio/WrapAudio.hpp"
 
 extern "C" {
     #include <lua.h>
