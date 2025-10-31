@@ -65,8 +65,8 @@ public:
 
             std::replace(rel.begin(), rel.end(), '\\', '/');
 
-            relativePath = rel;
-            return relativePath;
+            relativePath = relative;
+            return rel;
         }
         catch (const std::exception &e) {
             std::cout << "ERROR::FILE::SETRELATIVEPATH::" << e.what() << std::endl;
@@ -75,23 +75,31 @@ public:
     }
 
     static inline std::string getRelativePath(std::string &target) {
-        if (relativePath.size() == 0) {
+        namespace fs = std::filesystem;
+        if (relativePath.empty()) {
             return std::string("").append(target);
         }
-        std::string copy = relativePath;
-        return copy.append("\\").append(target);
+        fs::path targetPath(target);
+        fs::path relativeCpy = relativePath;
+        relativeCpy /= targetPath;
+
+        return relativeCpy.string();
     }
 
     static inline std::string getRelativePath(const char *target) {
-        if (relativePath.size() == 0) {
+        namespace fs = std::filesystem;
+        if (relativePath.empty()) {
             return std::string("").append(std::string(target));
         }
-        std::string copy = relativePath;
-        return copy.append("\\").append(std::string(target));
+        fs::path targetPath(target);
+        fs::path relativeCpy = relativePath;
+        relativeCpy /= targetPath;
+
+        return relativeCpy.string();
     }
 
 private:
-    static inline std::string relativePath {};
+    static inline std::filesystem::path relativePath {};
 };
 
 } // data
