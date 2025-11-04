@@ -3,6 +3,7 @@
 | Functions | Description |
 |------|-------------|
 |[nebula.ecs.spawn](#nebulaecsspawn)| Spawns an entity.
+|[nebula.ecs.despawn](#nebulaecsdespawn)| Despawns an entity.
 |[nebula.ecs.component](#nebulaecscomponent)| Defines a component.
 |[nebula.ecs.addComponent](#nebulaecsaddcomponent)| Adds component(s) to an entiy.
 |[nebula.ecs.getComponent](#nebulaecsgetcomponent)| Gets component(s) from an entity.
@@ -42,6 +43,25 @@ None.
 #### Example:
 ```lua
 entity = nebula.ecs.spawn()
+```
+
+---
+
+### nebula.ecs.despawn
+Despawns an entity, deleting all it's components.
+```lua
+nebula.ecs.despawn( entity )
+```
+#### Arguments:
+**[ number** entity **]** Entity ID.
+
+#### Returns:
+Nothing.
+
+#### Example:
+```lua
+entity = nebula.ecs.spawn()
+nebula.ecs.despawn(entity)
 ```
 
 ---
