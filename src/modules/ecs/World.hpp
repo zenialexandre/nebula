@@ -33,13 +33,41 @@ public:
         return id;
     }
 
+    // cleanAll is WIP.
+    void despawn(EntityId entity, bool cleanAll = true) {
+        if(!isEntityAlive(entity)) {
+            return;
+        }
+        // get entity record (row - table)
+        Record *r = this->entity_index[entity];
+        Table *table = r->table;
+        uint32_t entityRow = r->row;
+
+        for (ComponentId cId : table->type) {
+            // get component index on the table
+            uint32_t compIndex = this->getComponentColumn(cId, table);
+            // get component column
+            ColumnBase* column = table->columns.at(compIndex);
+            // delete data
+            column->deleteData(entityRow);
+        }
+        // remove entity from table's entities
+        table->entities.erase(table->entities.begin() + entityRow);
+        // rearrange table entities
+        this->rearrangeTableEntities(table, entityRow);
+        // add to unalived ids
+        this->entityIdIndex->unalivedIds.insert(entity);
+        // erase from entity index
+        this->entity_index.erase(entity);
+    }
+
     bool exists(EntityId id) {
-        return this->entity_index.count(id) != 0;
+        return isEntityAlive(id);
     }
 
     template <typename T>
     void addComponent(EntityId id, T t) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return;
         }
         Record *r = this->entity_index[id];
@@ -79,7 +107,7 @@ public:
 
     template <typename T>
     void addComponent(EntityId id, const char *name, T t) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return;
         }
         Record *r = this->entity_index[id];
@@ -119,7 +147,7 @@ public:
 
     template <typename T>
     void addComponentSafe(EntityId id, ComponentId c_id, T t) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return;
         }
         Record *r = this->entity_index[id];
@@ -177,7 +205,7 @@ public:
 
     template <typename T>
     void removeComponent(EntityId id) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return;
         }
         ComponentId c_id = getComponentId<T>(this->componentIdIndex);
@@ -204,7 +232,7 @@ public:
 
     template <typename T>
     void removeComponentSafe(EntityId id, ComponentId c_id) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return;
         }
         if(!this->hasComponent(id, c_id)) { // Entity doesn't have this component
@@ -227,7 +255,7 @@ public:
 
     template <typename T>
     T* getComponent(EntityId id) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return nullptr;
         }
         Record *r = this->entity_index[id];
@@ -247,7 +275,7 @@ public:
 
     template <typename T>
     T* getComponentSafe(EntityId id, ComponentId c_id) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return nullptr;
         }
         Record *r = this->entity_index[id];
@@ -267,7 +295,7 @@ public:
 
     template <typename T>
     bool hasComponent(EntityId id) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return false;
         }
         ComponentId c_id = getComponentId<T>(this->componentIdIndex);
@@ -278,7 +306,7 @@ public:
     }
 
     bool hasComponentSafe(EntityId id, ComponentId c_id) {
-        if(this->entity_index.count(id) == 0) { // Entity does not exist
+        if(!isEntityAlive(id)) { // Entity does not exist
             return false;
         }
         if(!c_id) { // Component not yet registered
@@ -339,6 +367,23 @@ private:
         componentIdIndex = new ComponentIdIndex();
         tableIdIndex = new TableIdIndex();
         ensureTable({}); // Create first (empty) table
+    }
+
+    bool entityExists(EntityId entity) {
+        if(this->entity_index.count(entity) == 0) {
+            return false;
+        }
+        return true;
+    }
+
+    bool isEntityAlive(EntityId entity) {
+        if (!entityExists(entity)) {
+            return false;
+        }
+        if (this->entityIdIndex->unalivedIds.count(entity) == 0) {
+            return true;
+        }
+        return false;
     }
 
     Record* createRecord(EntityId entity, Table* table) {

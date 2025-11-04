@@ -17,8 +17,14 @@ int w_poll(lua_State *L) {
     return 0;
 }
 
+int w_quit(lua_State *L) {
+    event()->quit();
+    return 0;
+}
+
 static const luaL_Reg functions[] = {
     {"poll", w_poll},
+    {"quit", w_quit},
     {0, 0}
 };
 

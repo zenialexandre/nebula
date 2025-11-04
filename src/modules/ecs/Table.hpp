@@ -11,6 +11,7 @@ namespace nebula {
 struct ColumnBase { // Type erasure struct
     virtual ~ColumnBase() = default;
     virtual void moveData(ColumnBase *colToMoveTo, uint32_t entRow) = 0;
+    virtual void deleteData(uint32_t entRow) = 0;
     virtual ColumnBase* createClone() const = 0;
     virtual void debug() const = 0;
 };
@@ -27,6 +28,10 @@ struct Column : ColumnBase {
     void moveData(ColumnBase *colToMoveTo, uint32_t entRow) {
         Column<T> *col = (Column<T>*)colToMoveTo;
         col->data.emplace_back(this->data.at(entRow));
+        this->data.erase(this->data.begin() + entRow);
+    }
+
+    void deleteData(uint32_t entRow) {
         this->data.erase(this->data.begin() + entRow);
     }
 

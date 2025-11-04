@@ -482,6 +482,12 @@ namespace nebula {
         return 1;
     }
 
+    int w_despawn(lua_State *L) {
+        EntityId entity = (EntityId) luaL_checkinteger(L, 1);
+        ecs()->despawn(entity);
+        return 1;
+    }
+
     int w_print(lua_State *L) {
         ecs()->print();
         return 0;
@@ -644,6 +650,7 @@ namespace nebula {
 
     static const luaL_Reg functions[] = {
         {"spawn", w_spawn},
+        {"despawn", w_despawn},
         {"print", w_print},
         {"component", w_component},
         {"addComponent", w_addComponent},

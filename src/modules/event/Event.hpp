@@ -22,6 +22,7 @@ class Event: public Module {
 public:
     Event();
     NebulaEvent *poll();
+    void quit();
 };
 
 } // event

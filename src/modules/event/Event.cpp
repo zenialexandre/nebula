@@ -32,5 +32,11 @@ NebulaEvent *Event::poll() {
     return nullptr;
 }
 
+void Event::quit() {
+    SDL_Event quitEvent;
+    quitEvent.type = SDL_EVENT_QUIT;
+    SDL_PushEvent(&quitEvent);
+}
+
 } // event
 } // nebula
