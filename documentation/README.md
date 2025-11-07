@@ -49,4 +49,5 @@ An improvement on the previous Pong game, adding Sprites, Text, Music and Score.
 <img width="806" height="637" alt="image" src="https://github.com/user-attachments/assets/4cb5d07e-ec47-4453-8c0a-29d8859e603b" />
 
 ### Breakout
-Simple Breakout game made by [JonathanBack](https://github.com/JonathanBack).
+Simple Breakout game made by [JonathanBack](https://github.com/JonathanBack). [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/breakout)
+<img width="809" height="637" alt="image" src="https://github.com/user-attachments/assets/75a3cda9-dd90-452b-95f1-6d955c7f3abf" />
