@@ -41,13 +41,22 @@ With everything set, a green button should appear in your main.lua file:
 ## Examples
 
 ### Pong
-Simple Pong game using only Position, Quad and CollisionBox components. [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/pong)
+Simple Pong game using only Position, Quad and CollisionBox components. [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/pong)  
+
 <img width="808" height="636" alt="image" src="https://github.com/user-attachments/assets/ad02fe69-962e-46e1-80c2-b1bcb12f5d5a" />
 
 ### Pong 2
-An improvement on the previous Pong game, adding Sprites, Text, Music and Score. [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/pong-2)
+An improvement on the previous Pong game, adding Sprites, Text, Music and Score. [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/pong-2)  
+
 <img width="806" height="637" alt="image" src="https://github.com/user-attachments/assets/4cb5d07e-ec47-4453-8c0a-29d8859e603b" />
 
 ### Breakout
-Simple Breakout game made by [JonathanBack](https://github.com/JonathanBack). [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/breakout)
+Simple Breakout game made by [JonathanBack](https://github.com/JonathanBack). [link](https://github.com/maumafra/nebula/tree/main/documentation/examples/breakout)  
+
 <img width="809" height="637" alt="image" src="https://github.com/user-attachments/assets/75a3cda9-dd90-452b-95f1-6d955c7f3abf" />
+
+### Minesweeper
+Minesweeper game made with the Nebula Game Engine. Made by [zenialexandre](https://github.com/zenialexandre). [link](https://github.com/zenialexandre/minesweeper-nebula/tree/main)  
+
+<img width="507" height="540" alt="image" src="https://github.com/user-attachments/assets/c2944ecc-10d2-4f28-a8cd-c4edafd0e088" />
+
