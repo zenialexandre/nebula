@@ -58,6 +58,8 @@ static RunAction runNebula(int argc, char **argv, int &mainReturn) {
             }
         }
 
+        //nebula::data::File::setCurrentPath(nebulaExePath);
+
         if (gamePath.size() != 0) {
             gamePath = nebula::data::File::setRelativePath(nebulaExePath, gamePath);
 

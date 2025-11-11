@@ -5,6 +5,10 @@
 #include <iostream>
 #include <algorithm>
 
+//#ifdef _WIN32
+//    #include <direct.h>
+//#endif
+
 namespace nebula {
     namespace data {
 
@@ -97,6 +101,19 @@ public:
 
         return relativeCpy.string();
     }
+
+    //static inline void setCurrentPath(std::string &nebulaExePath) {
+    //    std::filesystem::path exeDir = std::filesystem::path(nebulaExePath).parent_path();
+    //    #ifdef _WIN32
+    //        if (exeDir.has_root_name()) {
+    //            const std::string root = exeDir.root_name().string();
+    //            if (!root.empty() && std::isalpha(root[0])) {
+    //                _chdrive(std::toupper(root[0]) - 'A' + 1);
+    //            }
+    //        }
+    //    #endif
+    //    std::filesystem::current_path(exeDir);
+    //}
 
 private:
     static inline std::filesystem::path relativePath {};

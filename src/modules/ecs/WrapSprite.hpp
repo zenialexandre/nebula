@@ -24,7 +24,8 @@ namespace nebula {
                 if (!checkUserData<graphics::Texture>(L, -1)) {
                     luaL_error(L, "Invalid Texture.");
                 }
-                sprite->texture = (graphics::Texture*)lua_touserdata(L, -1);
+                ObjectProxy *proxy = (ObjectProxy *)lua_touserdata(L, -1);
+                sprite->texture = (graphics::Texture*)proxy->pointer;
             } else {
                 luaL_error(L, "Invalid field: Sprite.%s", keyName);
             }

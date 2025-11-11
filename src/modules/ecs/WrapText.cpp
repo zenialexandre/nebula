@@ -9,7 +9,7 @@ namespace nebula {
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "font") == 0) {
-            lua_pushlightuserdata(L, text->font);
+            pushUserData<graphics::Font>(L, text->font, "Font");
         } else if (strcmp(key, "value") == 0) {
             lua_pushstring(L, text->value.c_str());
         } else {
@@ -28,7 +28,8 @@ namespace nebula {
             if (!checkUserData<graphics::Font>(L, 3)) {
                 luaL_error(L, "Invalid Font.");
             }
-            text->font = (graphics::Font*)lua_touserdata(L, 3);
+            ObjectProxy *proxy = (ObjectProxy*)luaL_checkudata(L, 3, "Font");
+            text->font = (graphics::Font*)proxy->pointer;
         } else if (strcmp(key, "value") == 0) {
             std::string s = luaL_checkstring(L, 3);
             text->value = s;

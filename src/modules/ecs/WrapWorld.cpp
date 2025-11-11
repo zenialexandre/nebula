@@ -361,7 +361,7 @@ namespace nebula {
         if (pointer == nullptr) {
             lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
-            luaL_error(L, "The Component %s for Entity %i not found.");
+            luaL_error(L, "The Component %s for Entity %d not found.");
         }
 
         ComponentProxy* proxy = (ComponentProxy*)lua_newuserdata(L, sizeof(ComponentProxy));
@@ -417,13 +417,13 @@ namespace nebula {
         if (tabRef == nullptr) {
             lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
-            luaL_error(L, "The Component %s for Entity %i not found.");
+            luaL_error(L, "The Component %s for Entity %d not found.");
         }
 
         if (tabRef->luaRefBaseTable == LUA_NOREF) {
             lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
-            luaL_error(L, "The Component %s for Entity %i does not exists anymore.");
+            luaL_error(L, "The Component %s for Entity %d does not exists anymore.");
         }
 
         lua_rawgeti(L, LUA_REGISTRYINDEX, tabRef->luaRefBaseTable);
@@ -453,7 +453,7 @@ namespace nebula {
         if (tabRef->luaRefBaseTable == LUA_NOREF) {
             lua_pushstring(L, metadataName);
             lua_pushinteger(L, (int)entId);
-            luaL_error(L, "The Component %s for Entity %i does not exists anymore.");
+            luaL_error(L, "The Component %s for Entity %d does not exists anymore.");
         }
 
         luaL_unref(L, LUA_REGISTRYINDEX, tabRef->luaRefBaseTable);

@@ -26,7 +26,8 @@ namespace nebula {
                 if (!checkUserData<graphics::Font>(L, -1)) {
                     luaL_error(L, "Invalid Font.");
                 }
-                text->font = (graphics::Font*)lua_touserdata(L, -1);
+                ObjectProxy *proxy = (ObjectProxy *)lua_touserdata(L, -1);
+                text->font = (graphics::Font*)proxy->pointer;
             } else if (strcmp(keyName, "value") == 0) {
                 text->value = luaL_checkstring(L, -1);
             } else {

@@ -3,12 +3,19 @@
 #include "WrapModule.hpp"
 #include "WrapType.hpp"
 #include <iostream>
+//#include <typeinfo>
+#include <string>
 
 extern "C" {
     #include <lua.h>
 	#include <lualib.h>
 	#include <lauxlib.h>
 }
+
+struct ObjectProxy {
+    void *pointer;
+    //std::string type;
+};
 
 namespace nebula {
 
@@ -74,12 +81,23 @@ static bool checkUserData(lua_State *L, const int udataIdx) {
         return false;
     }
 
-    T *pointer = (T*)lua_touserdata(L, udataIdx);
-
-    if (pointer == nullptr) {
+    ObjectProxy *proxy = (ObjectProxy*)lua_touserdata(L, udataIdx);
+    if (proxy == nullptr) {
         return false;
     }
+    //if (std::string(typeid(T).name()).find(proxy->type) == std::string::npos) {
+    //    return false;
+    //}
     return true;
+}
+
+template <typename T>
+static void pushUserData(lua_State *L, T *objectPointer, std::string metatableName) {
+    ObjectProxy *proxy = (ObjectProxy*)lua_newuserdata(L, sizeof(ObjectProxy));
+    proxy->pointer = objectPointer;
+    //proxy->type = std::string(typeid(T).name());
+    luaL_getmetatable(L, metatableName.c_str());
+    lua_setmetatable(L, -2);
 }
 
 static int getNumOfTableFields(lua_State *L, const int tableIdx) {

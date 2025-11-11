@@ -9,7 +9,7 @@ namespace nebula {
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "texture") == 0) {
-            lua_pushlightuserdata(L, sprite->texture);
+            pushUserData<graphics::Texture>(L, sprite->texture, "Texture");
         } else {
             lua_pushnil(L);
         }
@@ -26,7 +26,8 @@ namespace nebula {
             if (!checkUserData<graphics::Texture>(L, 3)) {
                 luaL_error(L, "Invalid Texture.");
             }
-            sprite->texture = (graphics::Texture*)lua_touserdata(L, 3);
+            ObjectProxy *proxy = (ObjectProxy*)luaL_checkudata(L, 3, "Texture");
+            sprite->texture = (graphics::Texture*)proxy->pointer;
         } else {
             luaL_error(L, "Invalid field: Sprite.%s", key);
         }
