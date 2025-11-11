@@ -26,9 +26,9 @@ int w_newTexture(lua_State *L) {
     if (texture == nullptr) {
         luaL_error(L, "Something went wrong when creating a sprite");
     }
-    lua_pushlightuserdata(L, texture);
-    luaL_getmetatable(L, "Texture");
-    lua_setmetatable(L, -2);
+    pushUserData<Texture>(L, texture, "Texture");
+    //luaL_getmetatable(L, "Texture");
+    //lua_setmetatable(L, -2);
     return 1;
 }
 
@@ -52,9 +52,9 @@ int w_newFont(lua_State *L) {
     if (font == nullptr) {
         luaL_error(L, "Something went wrong when creating a font");
     }
-    lua_pushlightuserdata(L, font);
-    luaL_getmetatable(L, "Font");
-    lua_setmetatable(L, -2);
+    pushUserData<Font>(L, font, "Font");
+    //luaL_getmetatable(L, "Font");
+    //lua_setmetatable(L, -2);
     return 1;
 }
 

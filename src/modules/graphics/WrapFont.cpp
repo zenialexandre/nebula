@@ -4,7 +4,8 @@ namespace nebula {
     namespace graphics {
 
     int w_fontIndex(lua_State *L) {
-        Font *font = (Font*)luaL_checkudata(L, 1, "Font");
+        ObjectProxy *proxy = (ObjectProxy*)luaL_checkudata(L, 1, "Font");
+        Font *font = (Font*)proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "lineHeight") == 0) {
@@ -17,7 +18,8 @@ namespace nebula {
     }
 
     int w_fontToString(lua_State *L) {
-        Font *font = (Font*)luaL_checkudata(L, 1, "Font");
+        ObjectProxy *proxy = (ObjectProxy*)luaL_checkudata(L, 1, "Font");
+        Font *font = (Font*)proxy->pointer;
         lua_pushstring(L, "Font");
         return 1;
     }

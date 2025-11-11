@@ -18,6 +18,7 @@ struct Vertex {
     glm::vec4 color;
     glm::vec2 texCoord;
     float texIndex;
+    float isText;
 };
 
 class Renderer {
@@ -30,7 +31,7 @@ public:
     void end();
     void flush();
 
-    void drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float rotation, Texture* texture = nullptr);
+    void drawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float rotation, Texture* texture = nullptr, bool isText = false);
 
     void drawText(const std::string& text, Font* font, const glm::vec2& position, const glm::vec4& color, const glm::vec2& scale, const float rotation);
 

@@ -4,7 +4,8 @@ namespace nebula {
     namespace graphics {
 
     int w_textureIndex(lua_State *L) {
-        Texture *texture = (Texture*)luaL_checkudata(L, 1, "Texture");
+        ObjectProxy *proxy = (ObjectProxy*)luaL_checkudata(L, 1, "Texture");
+        Texture *texture = (Texture*)proxy->pointer;
         const char *key = luaL_checkstring(L, 2);
 
         if (strcmp(key, "width") == 0) {
@@ -19,8 +20,9 @@ namespace nebula {
     }
 
     int w_textureToString(lua_State *L) {
-        Texture *texture = (Texture*)luaL_checkudata(L, 1, "Texture");
-        lua_pushfstring(L, "Texture(id: %i, w: %f, h: %f)", texture->getId(), texture->width, texture->height);
+        ObjectProxy *proxy = (ObjectProxy*)luaL_checkudata(L, 1, "Texture");
+        Texture *texture = (Texture*)proxy->pointer;
+        lua_pushfstring(L, "Texture(id: %d, w: %f, h: %f)", texture->getId(), texture->width, texture->height);
         return 1;
     }
 

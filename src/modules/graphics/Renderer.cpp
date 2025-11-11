@@ -73,6 +73,11 @@ bool Renderer::setupBuffers() {
     glEnableVertexAttribArray(3);
     glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texIndex));
 
+    // Is Text
+    glEnableVertexAttribArray(4);
+    glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, isText));
+
+
     for (int i = 0; i < MAX_TEXTURE_SLOTS; i++) {
         glActiveTexture(GL_TEXTURE0 + i);
         glBindTexture(GL_TEXTURE_2D, 0);
@@ -133,7 +138,7 @@ void Renderer::flush() {
     textures.clear();
 }
 
-void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, float rotation, Texture *texture) {
+void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const glm::vec4 &color, float rotation, Texture *texture, bool isText) {
     if (indexCount >= MAX_INDICES) {
         flush();
     }
@@ -190,6 +195,7 @@ void Renderer::drawQuad(const glm::vec2 &position, const glm::vec2 &size, const 
         vertices[vertexCount].color = color;
         vertices[vertexCount].texCoord = texCoords[i];
         vertices[vertexCount].texIndex = textureIndex;
+        vertices[vertexCount].isText = isText ? 1.0f : 0.0f;
         vertexCount++;
     }
 
@@ -223,7 +229,8 @@ void Renderer::drawText(const std::string& text, Font* font, const glm::vec2& po
             glm::vec2(w, h),
             color,
             0, // rotation, use 0 because it is not working properly for text
-            ch.texture
+            ch.texture,
+            true
         );
 
         x += (ch.advance >> 6) * scale.x;
@@ -247,12 +254,13 @@ void Renderer::drawEntity(ecs::EntityId entity) {
         scaleY = scale->y;
     }
 
-    float r = 1.0f, g = 1.0f, b = 1.0f;
+    float r = 1.0f, g = 1.0f, b = 1.0f, a = 1.0f;
 
     if (color) {
         r = color->r;
         g = color->g;
         b = color->b;
+        a = color->a;
     }
 
     float rotationValue = 0.0f;
@@ -269,7 +277,7 @@ void Renderer::drawEntity(ecs::EntityId entity) {
                 sprite->texture->width * scaleX,
                 sprite->texture->height * scaleY
             ),
-            glm::vec4(r, g, b, 0.0f),
+            glm::vec4(r, g, b, a),
             rotationValue,
             sprite->texture
         );
@@ -282,7 +290,7 @@ void Renderer::drawEntity(ecs::EntityId entity) {
                 quad->width * scaleX,
                 quad->height * scaleY
             ),
-            glm::vec4(r, g, b, 0.0f),
+            glm::vec4(r, g, b, a),
             rotationValue,
             nullptr
         );
@@ -293,7 +301,7 @@ void Renderer::drawEntity(ecs::EntityId entity) {
             text->value,
             text->font,
             glm::vec2(pos->x, pos->y),
-            glm::vec4(r, g, b, 1.0f),
+            glm::vec4(r, g, b, a),
             glm::vec2(scaleX, scaleY),
             rotationValue
         );
