@@ -79,7 +79,7 @@ nebula.ecs.component( name , definition )
 **[ table ]** Component defintion.
 
 #### Example:
-To get a Nebula pre-made component, you should not pass a definition table, as they are already defined:
+To get a Nebula [pre-made](#nebula-pre-made-components) component, you should not pass a definition table, as they are already defined:
 ```lua
 local Position = nebula.ecs.component("Position")
 ```
@@ -108,7 +108,7 @@ nebula.ecs.addComponent( entity , component... )
 Nothing.
 
 #### Example:
-Nebula pre-made components:
+Nebula [pre-made](#nebula-pre-made-components) components:
 ```lua
 local Quad = nebula.ecs.component("Quad")
 local Position = nebula.ecs.component("Position")
@@ -151,7 +151,7 @@ nebula.ecs.getComponent( entity , componentDefinition... )
 **[ table ]** Component(s).
 
 #### Example:
-Nebula pre-made components:
+Nebula [pre-made](#nebula-pre-made-components) components:
 ```lua
 local Position = nebula.ecs.component("Position")
 entity = nebula.ecs.spawn()
@@ -196,7 +196,7 @@ nebula.ecs.removeComponent( entity , componentDefinition... )
 Nothing.
 
 #### Example:
-Nebula pre-made components:
+Nebula [pre-made](#nebula-pre-made-components) components:
 ```lua
 local Position = nebula.ecs.component("Position")
 entity = nebula.ecs.spawn()
@@ -237,7 +237,7 @@ nebula.ecs.hasComponent( entity , componentDefinition... )
 **[ bool ]** True if entity has component(s).
 
 #### Example:
-Nebula pre-made components:
+Nebula [pre-made](#nebula-pre-made-components) components:
 ```lua
 local Position = nebula.ecs.component("Position")
 entity = nebula.ecs.spawn()
@@ -282,7 +282,7 @@ nebula.ecs.getEntitiesWith( entity , componentDefinition... )
 **[ table ]** Table of all entities that have the collection of components.
 
 #### Example:
-Nebula pre-made components:
+Nebula [pre-made](#nebula-pre-made-components) components:
 ```lua
 local Position = nebula.ecs.component("Position")
 entity = nebula.ecs.spawn()
@@ -455,7 +455,11 @@ nebula.ecs.addComponent(
 ---
 
 ### Color
-Color (R, G, B) to be applied to an entity.
+Color (R, G, B, A) to be applied to an entity.  
+
+The default Color is **White** (`r, g, b, a = 1.0`).
+
+The min/max values for `R`, `G`, `B` and `A` are 0 and 1, which means that in the `255-0` range, `1` is equivalent to `255` and `0` is equivalent to `0`.
 
 #### C++ Definition:
 ```cpp
