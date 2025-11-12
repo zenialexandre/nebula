@@ -17,6 +17,16 @@ bool Physics::checkCollision(ecs::EntityId e1, ecs::EntityId e2) {
     return !(box1.right < box2.left || box1.left > box2.right || box1.bottom < box2.top || box1.top > box2.bottom);
 }
 
+bool Physics::checkCollision(float x, float y, ecs::EntityId entity) {
+    if (!world->hasComponent<Position>(entity) || !world->hasComponent<CollisionBox>(entity)) {
+        return false;
+    }
+
+    AABB box = getTransformedAABB(entity);
+
+    return !(x < box.left || x > box.right || y < box.top || y > box.bottom);
+}
+
 
 AABB Physics::getTransformedAABB(ecs::EntityId entity) {
     Position* pos = world->getComponent<Position>(entity);

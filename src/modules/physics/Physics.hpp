@@ -20,6 +20,8 @@ public:
 
     bool checkCollision(ecs::EntityId e1, ecs::EntityId e2);
 
+    bool checkCollision(float x, float y, ecs::EntityId entity);
+
 private:
     AABB getTransformedAABB(ecs::EntityId entity);
     glm::vec2 rotatePoint(const glm::vec2& point, float angle, const glm::vec2& origin);
