@@ -32,7 +32,7 @@ bool Mouse::isPressed(const std::string &button) const {
 
     auto mouseState = SDL_GetMouseState(nullptr, nullptr);
 
-    return mouseState && SDL_BUTTON_MASK(stringSDLButtonMap.at(button));
+    return mouseState & SDL_BUTTON_MASK(stringSDLButtonMap.at(button));
 }
 
 bool Mouse::isGrabbed() const {
