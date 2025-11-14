@@ -12,6 +12,7 @@
 |[nebula.audio.newSource](#nebulaaudionewsource)| Creates a new audio source from a file. |
 |[nebula.audio.play](#nebulaaudioplay)| Plays an audio source. |
 |[nebula.audio.pause](#nebulaaudiopause)| Pauses an audio source. |
+|[nebula.audio.resume](#nebulaaudioresume)| Pauses an audio source. |
 |[nebula.audio.stop](#nebulaaudiostop)| Stops an audio source. |
 |[nebula.audio.getSourceLength](#nebulaaudiogetsourcelength)| Gets the length of an audio source in bytes. |
 |[nebula.audio.setSourceVolume](#nebulaaudiosetsourcevolume)| Sets the volume of an audio source. |
@@ -218,6 +219,24 @@ Nothing.
 #### Example:
 ```lua
 nebula.audio.pause(musicId)
+```
+
+---
+
+### nebula.audio.resume
+Pauses an audio source.
+```lua
+nebula.audio.resume( sourceId )
+```
+#### Arguments:
+**[ number** sourceId **]** The ID of the audio source to resume.
+
+#### Returns:
+Nothing.
+
+#### Example:
+```lua
+nebula.audio.resume(musicId)
 ```
 
 ---
