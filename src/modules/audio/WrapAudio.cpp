@@ -83,6 +83,12 @@ int w_pause(lua_State *L) {
     return 0;
 }
 
+int w_resume(lua_State *L) {
+    int srcId = luaL_checkinteger(L, 1);
+    audio()->resume(srcId);
+    return 0;
+}
+
 int w_stop(lua_State *L) {
     int srcId = luaL_checkinteger(L, 1);
     audio()->stop(srcId);
@@ -91,8 +97,8 @@ int w_stop(lua_State *L) {
 
 int w_getSourceLength(lua_State *L) {
     int srcId = luaL_checkinteger(L, 1);
-    int length = audio()->getSourceLength(srcId);
-    lua_pushinteger(L, length);
+    float length = audio()->getSourceLength(srcId);
+    lua_pushnumber(L, length);
     return 1;
 }
 
@@ -183,9 +189,11 @@ static const luaL_Reg functions[] = {
     {"getCurrentDeviceID", w_getCurrentDeviceID},
     {"getPlaybackDevices", w_getPlaybackDevices},
     {"getRecordingDevices", w_getRecordingDevices},
+    {"getDeviceName", w_getDeviceName},
     {"newSource", w_newSource},
     {"play", w_play},
     {"pause", w_pause},
+    {"resume", w_resume},
     {"stop", w_stop},
     {"getSourceLength", w_getSourceLength},
     {"setSourceVolume", w_setSourceVolume},

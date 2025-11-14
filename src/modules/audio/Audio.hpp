@@ -12,15 +12,16 @@ namespace nebula {
 // streamed audio (ex: music)
 struct AudioSource {
     int id;
+    SDL_AudioDeviceID virtualDevice;
     SDL_AudioStream* stream = nullptr;
-    SDL_IOStream* io = nullptr;
     SDL_AudioSpec spec{};
-    Uint32 length = 0;
     bool playing = false;
     bool paused = false;
     bool loop = false;
     float volume = 1.0f;
     std::string path;
+    Uint8* buffer = nullptr;
+    Uint32 bufferLength = 0;
 };
 
 // loaded sound effect (short sfx)
@@ -55,8 +56,9 @@ public:
     int newSource(const std::string& path);
     void play(int sourceId, bool loop = false);
     void pause(int sourceId);
+    void resume(int sourceId);
     void stop(int sourceId);
-    int getSourceLength(int sourceId);
+    float getSourceLength(int sourceId);
     void setSourceVolume(int sourceId, float volume);
     float getSourceVolume(int sourceId) const;
     bool isPaused(int sourceId);
@@ -75,8 +77,8 @@ public:
     float getVolume() const;
 
 private:
-    static void audioCallback(void* userdata, const SDL_AudioSpec *spec, float *buffer, int buflen);
-    void mixAudio(const SDL_AudioSpec* spec, float* buffer, int buflen);
+    //static void audioCallback(void* userdata, const SDL_AudioSpec *spec, float *buffer, int buflen);
+    //void mixAudio(const SDL_AudioSpec* spec, float* buffer, int buflen);
 
     SDL_AudioDeviceID deviceId = 0;
     SDL_AudioSpec deviceSpec{};
