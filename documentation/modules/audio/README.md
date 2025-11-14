@@ -14,7 +14,7 @@
 |[nebula.audio.pause](#nebulaaudiopause)| Pauses an audio source. |
 |[nebula.audio.resume](#nebulaaudioresume)| Pauses an audio source. |
 |[nebula.audio.stop](#nebulaaudiostop)| Stops an audio source. |
-|[nebula.audio.getSourceLength](#nebulaaudiogetsourcelength)| Gets the length of an audio source in bytes. |
+|[nebula.audio.getSourceLength](#nebulaaudiogetsourcelength)| Gets the length of an audio source in seconds. |
 |[nebula.audio.setSourceVolume](#nebulaaudiosetsourcevolume)| Sets the volume of an audio source. |
 |[nebula.audio.getSourceVolume](#nebulaaudiogetsourcevolume)| Gets the volume of an audio source. |
 |[nebula.audio.isPaused](#nebulaaudioispaused)| Checks if an audio source is paused. |
