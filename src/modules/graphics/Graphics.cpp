@@ -11,6 +11,10 @@ static const char fragShaderCode[] =
 #include "../../../resources/shaders/fragShader.glsl"
 ;
 
+static std::unordered_map<std::string, TextureFilter> stringFilterMap = {
+    {"nearest", NEAREST}, {"linear", LINEAR}
+};
+
 Graphics::Graphics(int width, int height)
             : Module(GRAPHICS, "graphics")
             , defaultShader(nullptr)
@@ -70,11 +74,11 @@ void Graphics::endScene() {
     renderer->end();
 }
 
-Texture *Graphics::newTexture(std::string path) {
+Texture *Graphics::newTexture(std::string path, TextureFilter filter) {
     if (textures.count(path) != 0) {
         return textures.at(path);
     }
-    Texture *tex = new Texture(path.c_str());
+    Texture *tex = new Texture(path.c_str(), filter);
     textures.insert({path, tex});
     return tex;
 }
@@ -125,6 +129,17 @@ void Graphics::moveCameraTo(float x, float y) {
 
 void Graphics::pointCameraTo(float x, float y) {
     defaultCamera->pointCameraTo(x, y);
+}
+
+void Graphics::setDefaultFilter(TextureFilter filter) {
+    this->defaultTextureFilter = filter;
+}
+
+TextureFilter Graphics::mapFilter(std::string filterName) {
+    if (stringFilterMap.count(filterName) == 0) {
+        return FILTER_UNKNOWN;
+    }
+    return stringFilterMap.at(filterName);
 }
 
 }// graphics

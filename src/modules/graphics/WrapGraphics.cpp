@@ -16,19 +16,30 @@ int w_draw(lua_State *L) {
 }
 
 int w_newTexture(lua_State *L) {
-    if (lua_gettop(L) != 1 || !luaL_checkstring(L, 1)) {
-        luaL_error(L, "This function should only receive the sprite path.");
+    int count = lua_gettop(L);
+    if (count > 2) {
+        luaL_error(L, "This function should only receive the sprite path and filter.");
     }
 
-    const char* filePath = lua_tostring(L, 1);
+    const char* filePath = luaL_checkstring(L, 1);
     std::string filePathRelative = data::File::getRelativePath(filePath);
-    Texture *texture = graphics()->newTexture(filePathRelative);
+    Texture *texture {};
+
+    if (count == 2) {
+        std::string filterStr = luaL_checkstring(L, 2);
+        TextureFilter filter = graphics()->mapFilter(filterStr);
+        if (filter == FILTER_UNKNOWN) {
+            texture = graphics()->newTexture(filePathRelative);
+        } else {
+            texture = graphics()->newTexture(filePathRelative, filter);
+        }
+    } else {
+        texture = graphics()->newTexture(filePathRelative);
+    }
     if (texture == nullptr) {
         luaL_error(L, "Something went wrong when creating a sprite");
     }
     pushUserData<Texture>(L, texture, "Texture");
-    //luaL_getmetatable(L, "Texture");
-    //lua_setmetatable(L, -2);
     return 1;
 }
 
@@ -107,6 +118,15 @@ int w_pointCameraTo(lua_State *L) {
     return 0;
 }
 
+int w_setDefaultFilter(lua_State *L) {
+    std::string filterStr = luaL_checkstring(L, 1);
+    TextureFilter filter = graphics()->mapFilter(filterStr);
+    if (filter != FILTER_UNKNOWN) {
+        graphics()->setDefaultFilter(filter);
+    }
+    return 0;
+}
+
 int w_beginScene(lua_State *L) {
     graphics()->beginScene(ecs());
     return 0;
@@ -125,6 +145,7 @@ static const luaL_Reg functions[] = {
     {"moveCamera", w_moveCamera},
     {"moveCameraTo", w_moveCameraTo},
     {"pointCameraTo", w_pointCameraTo},
+    {"setDefaultFilter", w_setDefaultFilter},
     {"_beginScene", w_beginScene},
     {"_endScene", w_endScene},
     {0, 0}

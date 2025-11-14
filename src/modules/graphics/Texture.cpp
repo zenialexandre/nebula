@@ -5,14 +5,14 @@ namespace nebula {
 
 Texture::Texture() : id(NULL) { }
 
-Texture::Texture(const char* texturePath) : id(NULL) {
+Texture::Texture(const char* texturePath, TextureFilter filter) : id(NULL) {
     glGenTextures(1, &id);
     glBindTexture(GL_TEXTURE_2D, id);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
     int width {}, height {}, nrChannels {};
     unsigned char* data {};

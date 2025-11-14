@@ -31,11 +31,14 @@ public:
     void endScene();
     void draw(ecs::EntityId entity);
 
-    Texture *newTexture(std::string path);
+    Texture *newTexture(std::string path, TextureFilter filter = defaultTextureFilter);
     Font *newFont(std::string path, uint32_t size = 12);
 
     void onWindowSizeChange(int width, int height);
     void setBackground(float r, float g, float b, float a  = 1.0f);
+
+    void setDefaultFilter(TextureFilter filter);
+    TextureFilter mapFilter(std::string filterName);
 
 private:
     Shader* defaultShader;
@@ -47,6 +50,8 @@ private:
     
     void getGLVersionInfo();
     void getVertexShaderInfo();
+
+    static inline TextureFilter defaultTextureFilter {LINEAR};
     
     std::unordered_map<std::string, Texture*> textures;
 }; 
