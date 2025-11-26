@@ -213,12 +213,12 @@ void Renderer::drawText(const std::string& text, Font* font, const glm::vec2& po
         
         if (c == '\n') {
             x = position.x;
-            y -= font->getLineHeight() * scale.y;
+            y += font->getLineHeight() * scale.y;
             continue;
         }
 
         float xpos = x + ch.bearing.x * scale.x;
-        float ypos = y - (ch.size.y - ch.bearing.y) * scale.y;
+        float ypos = y - (ch.bearing.y) * scale.y;
 
         float w = ch.size.x * scale.x;
         float h = ch.size.y * scale.y;
