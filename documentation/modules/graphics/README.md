@@ -6,6 +6,7 @@
 |[nebula.graphics.newTexture](#nebulagraphicsnewtexture)| Creates a new Texture.
 |[nebula.graphics.newFont](#nebulagraphicsnewfont)| Creates a new Font.
 |[nebula.graphics.setBackground](#nebulagraphicssetbackground)| Sets the color of the background.
+|[nebula.graphics.setDefaultFilter](#nebulagraphicssetdefaultfilter)| Sets the renderer default filter.
 |[nebula.graphics.moveCamera](#nebulagraphicsmovecamera)| Moves the camera.
 |[nebula.graphics.moveCameraTo](#nebulagraphicsmovecamerato)| Moves the camera to a point.
 |[nebula.graphics.pointCameraTo](#nebulagraphicspointcamerato)| Points the center of the camera to a point.
@@ -42,17 +43,18 @@ nebula.graphics.draw(entity)
 ### nebula.graphics.newTexture
 Creates a new Texture.
 ```lua
-nebula.graphics.newTexture( texturePath )
+nebula.graphics.newTexture( texturePath, filter )
 ```
 #### Arguments:
-**[ string** texturePath **]** Path to texture.
+**[ string** texturePath **]** Path to texture,
+**[ string** filter **]** (optional) Filter to be used in the texture.
 
 #### Returns:
 **[ Texture ]** Texture.
 
 #### Example:
 ```lua
-local myTexture = nebula.graphics.newTexture("resources/sprites/MySprite.png")
+local myTexture = nebula.graphics.newTexture("resources/sprites/MySprite.png", "linear")
 ```
 
 ---
@@ -94,6 +96,24 @@ Nothing.
 #### Example:
 ```lua
 nebula.graphics.setBackground(1.0, 1.0, 1.0)
+```
+
+---
+
+### nebula.graphics.setDefaultFilter
+Changes the renderer default filter.
+```lua
+nebula.graphics.setDefaultFilter( filter )
+```
+#### Arguments:
+**[ string** filter **]** Filter: `linear` or `nearest`.
+
+#### Returns:
+Nothing.
+
+#### Example:
+```lua
+nebula.graphics.setDefaultFilter("nearest")
 ```
 
 ---
