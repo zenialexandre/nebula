@@ -146,6 +146,26 @@ end
 
 ---
 
+### nebula.mouse.isReleased
+Checks if a mouse button is released.
+```lua
+nebula.mouse.isReleased( button )
+```
+#### Arguments:
+**[ string** button **]** Button name: `"left"`, `"lmb"`, `"middle"`, `"mmb"`, `"right"`, `"rmb"`, `"x1"`, `"x2"`.
+
+#### Returns:
+**[ bool ]** True if button is released.
+
+#### Example:
+```lua
+if nebula.mouse.isReleased("lmb") then
+    -- handle left click
+end
+```
+
+---
+
 ### nebula.mouse.isGrabbed
 Checks if mouse is grabbed.
 ```lua
