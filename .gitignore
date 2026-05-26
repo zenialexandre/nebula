@@ -39,3 +39,4 @@
 /build_linux/
 /release/
 /release_linux/
+CMakePresets.json

@@ -18,14 +18,14 @@ set(CMAKE_CXX_STANDARD 17)
 option(BUILD_SHARED_LIBS OFF)
 
 add_library(glad STATIC 
-    libs/glad/glad.c
-    libs/glad/include/glad/glad.h
-    libs/glad/include/KHR/khrplatform.h
+    vendor/glad/glad.c
+    vendor/glad/include/glad/glad.h
+    vendor/glad/include/KHR/khrplatform.h
 )
 
 add_library(glm INTERFACE)
 target_link_directories(glm INTERFACE 
-    libs/glm/
+    vendor/glm/
 )
 
 add_library(nebula_common STATIC
@@ -242,14 +242,14 @@ set(NEBULA_LIBRARIES
 include_directories(
     BEFORE
     src
-    libs
-    libs/glad/include
+    vendor
+    vendor/glad/include
     src/modules
 )
 
-add_subdirectory(libs/SDL3)
-add_subdirectory(libs/lua-5.4.8)
-add_subdirectory(libs/freetype-2.14.1)
+add_subdirectory(vendor/SDL3)
+add_subdirectory(vendor/lua-5.4.8)
+add_subdirectory(vendor/freetype-2.14.1)
 
 add_executable(nebula_console)
 target_sources(nebula_console PRIVATE src/nebula.cpp)
@@ -258,7 +258,7 @@ target_link_libraries(nebula_console ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
 add_executable(nebula)
 target_sources(nebula PRIVATE src/nebula.cpp)
 target_link_libraries(nebula ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
-#target_include_directories(nebula PRIVATE libs/glad/include/)
+#target_include_directories(nebula PRIVATE vendor/glad/include/)
 
 if (WIN32)
     foreach(config_type IN ITEMS Release MinSizeRel RelWithDebInfo)

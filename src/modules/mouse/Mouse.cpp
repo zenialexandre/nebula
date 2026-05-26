@@ -40,7 +40,7 @@ bool Mouse::isReleased(const std::string &button) const {
         return false;
     }
 
-    auto mouseState = SLD_GetMouseState(nullptr, nullptr);
+    auto mouseState = SDL_GetMouseState(nullptr, nullptr);
 
     return !(mouseState & SDL_BUTTON_MASK(stringSDLButtonMap.at(button)));
 }
