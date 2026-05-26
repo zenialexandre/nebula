@@ -60,6 +60,14 @@ int w_isPressed(lua_State *L) {
     return 1;
 }
 
+int w_isReleased(lua_State *L) {
+    const char* btnName = luaL_checkstring(L, 1);
+
+    bool btnReleased = mouse()->isReleased(btnName);
+    lua_pushboolean(L, btnReleased);
+    return 1;
+}
+
 int w_isGrabbed(lua_State *L) {
     bool grabbed = mouse()->isGrabbed();
     lua_pushboolean(L, grabbed);

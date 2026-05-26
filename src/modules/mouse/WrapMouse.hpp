@@ -9,5 +9,5 @@ namespace nebula {
 
 extern "C" int nlua_mouse(lua_State *L);
 
-} // mouse    
+} // mouse
 } // nebula
