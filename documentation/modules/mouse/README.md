@@ -8,7 +8,8 @@
 |[nebula.mouse.setX](#nebulamousesetx)| Sets mouse X position.
 |[nebula.mouse.setY](#nebulamousesety)| Sets mouse Y position.
 |[nebula.mouse.setPosition](#nebulamousesetposition)| Sets mouse X and Y position.
-|[nebula.mouse.isPressed](#nebulamouseispressed)| Checks if a mouse button is pressed. 
+|[nebula.mouse.isPressed](#nebulamouseispressed)| Checks if a mouse button is pressed.
+|[nebula.mouse.isReleased](#nebulamouseisreleased)| Checks if a mouse button is released.
 |[nebula.mouse.isGrabbed](#nebulamouseisgrabbed)| Checks if mouse is grabbed.
 |[nebula.mouse.setGrabbed](#nebulamousesetgrabbed)| Sets if mouse is grabbed.
 
