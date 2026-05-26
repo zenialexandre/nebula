@@ -21,6 +21,8 @@ public:
 
     bool isPressed(const std::string &button) const;
 
+    bool isReleased(const std::string &button) const;
+
     bool isGrabbed() const;
 
     void setGrabbed(const bool grabbed);

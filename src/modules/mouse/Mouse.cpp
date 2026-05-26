@@ -35,6 +35,16 @@ bool Mouse::isPressed(const std::string &button) const {
     return mouseState & SDL_BUTTON_MASK(stringSDLButtonMap.at(button));
 }
 
+bool Mouse::isReleased(const std::string &button) const {
+    if (stringSDLButtonMap.count(button) == 0) {
+        return false;
+    }
+
+    auto mouseState = SLD_GetMouseState(nullptr, nullptr);
+
+    return !(mouseState & SDL_BUTTON_MASK(stringSDLButtonMap.at(button)));
+}
+
 bool Mouse::isGrabbed() const {
     window::Window *windowInstance = ModuleRegistry::getInstance<window::Window>(WINDOW);
     if (!windowInstance) {
