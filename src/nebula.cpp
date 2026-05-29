@@ -1,4 +1,5 @@
 #include <iostream>
+#include <SDL3/SDL_main.h>
 
 #include "scripts/NebulaSetup.hpp"
 #include "data/File.hpp"

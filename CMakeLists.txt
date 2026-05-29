@@ -255,26 +255,7 @@ add_executable(nebula_console)
 target_sources(nebula_console PRIVATE src/nebula.cpp)
 target_link_libraries(nebula_console ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
 
-add_executable(nebula)
+add_executable(nebula WIN32)
 target_sources(nebula PRIVATE src/nebula.cpp)
 target_link_libraries(nebula ${NEBULA_MODULES} ${NEBULA_LIBRARIES})
 #target_include_directories(nebula PRIVATE vendor/glad/include/)
-
-if (WIN32)
-    foreach(config_type IN ITEMS Release MinSizeRel RelWithDebInfo)
-        if (CMAKE_GENERATOR MATCHES "Visual Studio" OR CMAKE_CONFIGURATION_TYPES)
-            target_link_options(nebula PRIVATE
-                $<$<CONFIG:${config_type}>:/SUBSYSTEM:WINDOWS>
-                $<$<CONFIG:${config_type}>:/ENTRY:mainCRTStartup>
-            )
-        else()
-            if (CMAKE_BUILD_TYPE STREQUAL ${config_type})
-                if (MSVC)
-                    target_link_options(nebula PRIVATE "/SUBSYSTEM:WINDOWS" "/ENTRY:mainCRTStartup")
-                else()
-                    target_link_options(nebula PRIVATE "-mwindows")
-                endif()
-            endif()
-        endif()
-    endforeach()
-endif()
