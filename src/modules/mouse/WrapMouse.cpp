@@ -89,6 +89,7 @@ static const luaL_Reg functions[] = {
     {"setY", w_setY},
     {"setPosition", w_setPosition},
     {"isPressed", w_isPressed},
+    {"isReleased", w_isReleased},
     {"isGrabbed", w_isGrabbed},
     {"setGrabbed", w_setGrabbed},
     {0, 0}
