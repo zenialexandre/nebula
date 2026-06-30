@@ -49,7 +49,7 @@ add_library(nebula_time STATIC
     src/modules/time/WrapTime.hpp
 )
 target_link_libraries(nebula_time PUBLIC
-    nebula_common
+    lua-5.4.8
 )
 
 add_library(nebula_ecs STATIC
@@ -80,7 +80,7 @@ add_library(nebula_ecs STATIC
     src/modules/ecs/Components.hpp
 )
 target_link_libraries(nebula_ecs PUBLIC
-    nebula_common
+    lua-5.4.8
 )
 
 add_library(nebula_graphics STATIC
@@ -108,8 +108,6 @@ target_link_libraries(nebula_graphics PUBLIC
     lua-5.4.8
     freetype
     glad
-    nebula_ecs
-    nebula_common
 )
 target_include_directories(nebula_graphics PUBLIC
     resources/shaders/fragShader.glsl
@@ -124,8 +122,7 @@ add_library(nebula_window STATIC
 )
 target_link_libraries(nebula_window PUBLIC 
     SDL3::SDL3
-    nebula_common
-    nebula_graphics
+    lua-5.4.8
 )
 
 add_library(nebula_audio STATIC
@@ -136,7 +133,7 @@ add_library(nebula_audio STATIC
 )
 target_link_libraries(nebula_audio PUBLIC 
     SDL3::SDL3
-    nebula_common
+    lua-5.4.8
 )
 
 add_library(nebula_data STATIC
@@ -147,7 +144,7 @@ add_library(nebula_data STATIC
     src/modules/data/File.hpp
 )
 target_link_libraries(nebula_data PUBLIC
-    nebula_common
+    lua-5.4.8
 )
 
 add_library(nebula_keyboard STATIC
@@ -158,7 +155,7 @@ add_library(nebula_keyboard STATIC
 )
 target_link_libraries(nebula_keyboard PUBLIC
     SDL3::SDL3
-    nebula_common
+    lua-5.4.8
 )
 
 add_library(nebula_mouse STATIC
@@ -169,8 +166,7 @@ add_library(nebula_mouse STATIC
 )
 target_link_libraries(nebula_mouse PUBLIC
     SDL3::SDL3
-    nebula_common
-    nebula_window
+    lua-5.4.8
 )
 
 add_library(nebula_physics STATIC
@@ -180,8 +176,7 @@ add_library(nebula_physics STATIC
     src/modules/physics/WrapPhysics.cpp
 )
 target_link_libraries(nebula_physics PUBLIC 
-    nebula_ecs
-    nebula_common
+    lua-5.4.8
 )
 
 add_library(nebula_event STATIC
@@ -192,9 +187,7 @@ add_library(nebula_event STATIC
 )
 target_link_libraries(nebula_event PUBLIC
     SDL3::SDL3
-    nebula_common
-    nebula_window
-    nebula_graphics
+    lua-5.4.8
 )
 
 add_library(nebula_scripts STATIC
@@ -202,16 +195,8 @@ add_library(nebula_scripts STATIC
     src/modules/scripts/NebulaSetup.hpp
 )
 target_link_libraries(nebula_scripts PUBLIC
+    SDL3::SDL3
     lua-5.4.8
-    nebula_time
-    nebula_window
-    nebula_ecs
-    nebula_graphics
-    nebula_event
-    nebula_keyboard
-    nebula_mouse
-    nebula_physics
-    nebula_audio
 )
 target_include_directories(nebula_scripts PUBLIC
     src/modules/scripts/boot.lua
@@ -229,6 +214,8 @@ set(NEBULA_MODULES
     nebula_scripts
     nebula_keyboard
     nebula_audio
+    nebula_mouse
+    nebula_physics
 )
 
 set(NEBULA_LIBRARIES
