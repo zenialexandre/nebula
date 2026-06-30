@@ -527,7 +527,6 @@ namespace nebula {
 
             return 1;
         }
-        luaL_checktype(L, 2, LUA_TTABLE);
 
         if (ecs()->componentExists(compName) != 0) {
             lua_pushstring(L, compName);
@@ -536,7 +535,10 @@ namespace nebula {
 
         ComponentId compId = ecs()->registerComponent(compName);
 
-        int fieldCount = getNumOfTableFields(L, 2);
+        int fieldCount = 0;
+        if (numArgs == 2 && lua_istable(L, 2)) {
+            fieldCount = getNumOfTableFields(L, 2);
+        }
 
         // metatable
         lua_newtable(L);
